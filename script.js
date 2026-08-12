@@ -1,9 +1,7 @@
 (function(){
 "use strict";
 
-/* ==========================================================================
-   ICON LIBRARY (reusable inline SVG strings)
-   ========================================================================== */
+/*ICON LIBRARY (reusable inline SVG strings)*/
 const ICONS = {
   web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>',
   ai:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.5"/></svg>',
@@ -36,17 +34,13 @@ const ICONS = {
   refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>'
 };
 
-/* ==========================================================================
-   STORAGE HELPERS
-   ========================================================================== */
+/*STORAGE Helpers*/
 const Store = {
   get(key, fallback){ try{ const v = localStorage.getItem(key); return v===null?fallback:JSON.parse(v);}catch(e){return fallback;} },
   set(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
 };
 
-/* ==========================================================================
-   STATE
-   ========================================================================== */
+/*STATE*/
 const State = {
   theme: Store.get('rs_theme','system'),
   reducedMotion: Store.get('rs_reduced_motion', false),
@@ -59,16 +53,15 @@ const State = {
   activeFilterCount: 0,
   imageFile: null,
   genericFile: null,
-  dataMode: Store.get('rs_data_mode', null), // 'live' | 'demo' | null (null = auto: demo until URL configured)
+  dataMode: Store.get('rs_data_mode', 'live'), // 'live' | 'demo' — defaults to live: RaiaSpace tries a real SearXNG connection out of the box
   searxngUrl: localStorage.getItem('raiaspace-searxng-url') || '',
   searxngStatus: 'untested', // untested | testing | ok | json-unavailable | cors | network | invalid | timeout
   currentPage: 1,
   lastSearxngPayload: null
 };
-// Effective data source: explicit user choice wins; otherwise Live only if a URL has been saved.
+// Effective data source: Local Demo is always an explicit opt-in; everything else attempts a real SearXNG connection.
 function effectiveDataMode(){
-  if(State.dataMode === 'live' || State.dataMode === 'demo') return State.dataMode;
-  return State.searxngUrl ? 'live' : 'demo';
+  return State.dataMode === 'demo' ? 'demo' : 'live';
 }
 
 const MODES = [
@@ -120,9 +113,7 @@ const SUGGESTION_POOL = [
   'renewable energy breakthroughs'
 ];
 
-/* ==========================================================================
-   TOAST
-   ========================================================================== */
+/*TOAST*/
 function toast(msg){
   const stack = document.getElementById('toastStack');
   const el = document.createElement('div');
@@ -137,9 +128,7 @@ function escapeHTML(str){
   const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
 }
 
-/* ==========================================================================
-   THEME
-   ========================================================================== */
+/*THEME*/
 function applyTheme(){
   let effective = State.theme;
   if(effective === 'system'){
@@ -172,9 +161,7 @@ applyTheme();
 
 if(State.reducedMotion){ document.documentElement.style.setProperty('--dur-fast','0.001ms'); document.documentElement.style.setProperty('--dur-med','0.001ms'); }
 
-/* ==========================================================================
-   SETTINGS DRAWER
-   ========================================================================== */
+/*SETTINGS DRAWER*/
 function openDrawer(overlayId, drawerId, triggerBtn){
   document.getElementById(overlayId).classList.add('open');
   const d = document.getElementById(drawerId);
@@ -221,9 +208,7 @@ function clearHistory(){
 document.getElementById('clearHistoryFromSettings').addEventListener('click', clearHistory);
 document.getElementById('clearAllHistory').addEventListener('click', clearHistory);
 
-/* ==========================================================================
-   MOBILE NAV DRAWER
-   ========================================================================== */
+/*MOBILE NAV DRAWER*/
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
 function openMobileDrawer(){ openDrawer('mobileOverlay','mobileDrawer', mobileMenuBtn); applyTheme(); }
 function closeMobileDrawer(){ closeDrawer('mobileOverlay','mobileDrawer'); }
@@ -231,9 +216,7 @@ mobileMenuBtn.addEventListener('click', openMobileDrawer);
 document.getElementById('mobileDrawerClose').addEventListener('click', closeMobileDrawer);
 document.getElementById('mobileOverlay').addEventListener('click', closeMobileDrawer);
 
-/* ==========================================================================
-   HISTORY RENDER
-   ========================================================================== */
+/*HISTORY RENDER*/
 function renderHistory(){
   const list = document.getElementById('historyList');
   if(State.history.length === 0){
@@ -266,9 +249,7 @@ function timeAgo(ts){
   return Math.floor(hr/24)+'d ago';
 }
 
-/* ==========================================================================
-   SEARCH MODES RENDER
-   ========================================================================== */
+/*SEARCH MODES RENDER*/
 const modesRow = document.getElementById('modesRow');
 modesRow.innerHTML = MODES.map(m=>
   '<button type="button" class="mode-btn" role="tab" id="mode-tab-'+m.id+'" aria-selected="'+(m.id===State.mode)+'" data-mode="'+m.id+'" data-tooltip="'+m.desc+'">'+ICONS[m.icon]+'<span>'+m.label+'</span></button>'
@@ -296,9 +277,7 @@ function setMode(modeId){
   input.placeholder = PLACEHOLDERS[modeId];
 }
 
-/* ==========================================================================
-   TRENDING / FEATURES RENDER
-   ========================================================================== */
+/*TRENDING / FEATURES RENDER*/
 document.getElementById('trendGrid').innerHTML = TRENDING.map((t,i)=>
   '<button type="button" class="trend-card glass" data-query="'+escapeHTML(t.title)+'">'+
     '<span class="trend-num">'+String(i+1).padStart(2,'0')+'</span>'+
@@ -315,9 +294,7 @@ document.getElementById('featureGrid').innerHTML = FEATURES.map(f=>
   '<article class="feature-card glass"><div class="feature-icon">'+ICONS[f.icon]+'</div><h3>'+escapeHTML(f.title)+'</h3><p>'+escapeHTML(f.desc)+'</p></article>'
 ).join('');
 
-/* ==========================================================================
-   SEARCH INPUT BEHAVIOR
-   ========================================================================== */
+/*SEARCH INPUT BEHAVIOR*/
 const searchForm = document.getElementById('searchForm');
 const searchInput = document.getElementById('searchInput');
 const searchBox = document.querySelector('.search-box');
@@ -376,9 +353,7 @@ document.addEventListener('click', e=>{
   if(!e.target.closest('.search-shell')) closeAutocomplete();
 });
 
-/* ==========================================================================
-   AUTOCOMPLETE
-   ========================================================================== */
+/*AUTOCOMPLETE*/
 let acItems = [];
 function renderAutocomplete(query){
   const q = query.trim().toLowerCase();
@@ -459,9 +434,9 @@ function navigateAutocomplete(dir){
 }
 function closeAutocomplete(){ autocomplete.classList.remove('open'); }
 
-/* ==========================================================================
+/*
    ADVANCED FILTERS
-   ========================================================================== */
+   */
 const filtersToggleBtn = document.getElementById('filtersToggleBtn');
 const filtersPanel = document.getElementById('filtersPanel');
 filtersToggleBtn.addEventListener('click', ()=>{
@@ -493,9 +468,7 @@ document.getElementById('resetFiltersBtn').addEventListener('click', ()=>{
   document.getElementById('filterCount').hidden = true;
 });
 
-/* ==========================================================================
-   MOCK SEARCH SERVICES (data layer)
-   ========================================================================== */
+/*MOCK SEARCH SERVICES (data layer)*/
 const SearchServices = {
   searchWeb(query, filters){ return mockResults(query, 'web'); },
   searchAI(query, context){ return mockAIAnswer(query); },
@@ -542,9 +515,7 @@ function mockAIAnswer(query){
   };
 }
 
-/* ==========================================================================
-   SEARXNG SERVICE MODULE
-   ========================================================================== */
+/*SEARXNG SERVICE MODULE*/
 const SEARXNG_DEFAULT_URL = 'http://localhost:8080';
 const SEARXNG_TIMEOUT_MS = 15000;
 
@@ -721,9 +692,7 @@ async function checkSearxngConnection(url){
   return {status:'ok', message:'SearXNG is reachable and returned valid JSON.'};
 }
 
-/* ==========================================================================
-   RUN SEARCH / RESULTS VIEW
-   ========================================================================== */
+/*RUN SEARCH / RESULTS VIEW*/
 const homeView = document.getElementById('homeView');
 const resultsView = document.getElementById('resultsView');
 const resultsContent = document.getElementById('resultsContent');
@@ -1121,9 +1090,7 @@ document.getElementById('logoHome').addEventListener('click', (e)=>{
   window.scrollTo({top:0, behavior:'auto'});
 });
 
-/* ==========================================================================
-   KEYBOARD SHORTCUTS MODAL
-   ========================================================================== */
+/*KEYBOARD SHORTCUTS MODAL*/
 function openModal(id, triggerBtn){
   const overlay = document.getElementById(id);
   overlay.classList.add('open');
@@ -1169,9 +1136,7 @@ document.addEventListener('keydown', e=>{
   }
 });
 
-/* ==========================================================================
-   VOICE SEARCH
-   ========================================================================== */
+/*VOICE SEARCH*/
 const voiceBtn = document.getElementById('voiceBtn');
 const voiceStatus = document.getElementById('voiceStatus');
 const voiceTranscript = document.getElementById('voiceTranscript');
@@ -1264,9 +1229,7 @@ const obs = new MutationObserver(()=>{
 });
 obs.observe(voiceTranscript, {childList:true, characterData:true, subtree:true});
 
-/* ==========================================================================
-   IMAGE SEARCH MODAL
-   ========================================================================== */
+/*IMAGE SEARCH MODAL*/
 const imageSearchBtn = document.getElementById('imageSearchBtn');
 const imageDropzone = document.getElementById('imageDropzone');
 const imageFileInput = document.getElementById('imageFileInput');
@@ -1327,9 +1290,7 @@ function formatBytes(b){
   return (b/(1024*1024)).toFixed(1)+' MB';
 }
 
-/* ==========================================================================
-   FILE UPLOAD MODAL
-   ========================================================================== */
+/*FILE UPLOAD MODAL*/
 const fileUploadBtn = document.getElementById('fileUploadBtn');
 const fileDropzone = document.getElementById('fileDropzone');
 const genericFileInput = document.getElementById('genericFileInput');
@@ -1392,9 +1353,7 @@ fileSearchSubmitBtn.addEventListener('click', ()=>{
   runSearch(State.genericFile.name.replace(/\.[^.]+$/,''));
 });
 
-/* ==========================================================================
-   CAMERA SEARCH MODAL
-   ========================================================================== */
+/*CAMERA SEARCH MODAL*/
 const cameraSearchBtn = document.getElementById('cameraSearchBtn');
 const cameraContent = document.getElementById('cameraContent');
 let cameraStream = null;
@@ -1449,9 +1408,7 @@ function stopCamera(){
   if(cameraStream){ cameraStream.getTracks().forEach(t=>t.stop()); cameraStream = null; }
 }
 
-/* ==========================================================================
-   SEARXNG SETTINGS UI WIRING
-   ========================================================================== */
+/*SEARXNG SETTINGS UI WIRING*/
 const searxngUrlInput = document.getElementById('searxngUrlInput');
 const toggleLiveSearxng = document.getElementById('toggleLiveSearxng');
 const searxngStatusPill = document.getElementById('searxngStatusPill');
@@ -1461,7 +1418,7 @@ const dataSourceSub = document.getElementById('dataSourceSub');
 const dataModeBadge = document.getElementById('dataModeBadge');
 const dataModeBadgeText = document.getElementById('dataModeBadgeText');
 
-searxngUrlInput.value = State.searxngUrl;
+searxngUrlInput.value = State.searxngUrl || SEARXNG_DEFAULT_URL;
 toggleLiveSearxng.checked = effectiveDataMode() === 'live';
 
 function refreshDataModeUI(){
@@ -1480,18 +1437,11 @@ function checkHttpsMismatch(){
 }
 
 toggleLiveSearxng.addEventListener('change', e=>{
-  if(e.target.checked){
-    if(!State.searxngUrl){
-      toast('Add a SearXNG instance URL first');
-      e.target.checked = false;
-      return;
-    }
-    State.dataMode = 'live';
-  } else {
-    State.dataMode = 'demo';
-  }
+  State.dataMode = e.target.checked ? 'live' : 'demo';
   Store.set('rs_data_mode', State.dataMode);
   refreshDataModeUI();
+  if(State.dataMode === 'live') toast('Using '+(State.searxngUrl || SEARXNG_DEFAULT_URL));
+  else toast('Switched to Local Demo — no requests will be sent anywhere');
 });
 
 function setStatusPill(state, text){
@@ -1556,9 +1506,17 @@ document.getElementById('privacyOverlay').addEventListener('click', e=>{ if(e.ta
 
 refreshDataModeUI();
 
-/* ==========================================================================
-   INIT
-   ========================================================================== */
+// Quietly probe the configured (or default) SearXNG instance on load, without blocking the UI.
+if(effectiveDataMode() === 'live'){
+  setStatusPill('testing', 'Checking connection…');
+  checkSearxngConnection(searxngUrlInput.value).then(result=>{
+    const label = STATUS_LABELS[result.status] || STATUS_LABELS.network;
+    setStatusPill(label.cls, result.message || label.text);
+    State.searxngStatus = result.status;
+  });
+}
+
+/*INIT*/
 autoResize(); updateSubmitState(); renderHistory();
 document.getElementById('languageSelect').value = Store.get('rs_language','English');
 document.getElementById('regionSelect').value = Store.get('rs_region','Automatic');

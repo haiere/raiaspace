@@ -1,6 +1,4 @@
-/* ==========================================================================
-   RAIASPACE — DESIGN TOKENS
-   ========================================================================== */
+/*RAIASPACE — DESIGN TOKENS*/
 :root{
   --accent:#3b82f6;
   --accent-glow:rgba(59,130,246,0.24);
@@ -87,9 +85,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
   outline:2px solid var(--accent);outline-offset:2px;
 }
 
-/* ==========================================================================
-   GLASS SURFACE
-   ========================================================================== */
+/*GLASS SURFACE*/
 .glass{
   background:var(--glass-bg);
   border:1px solid var(--glass-border);
@@ -102,9 +98,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
   .glass{background:var(--surface-solid);}
 }
 
-/* ==========================================================================
-   TOP NAVIGATION
-   ========================================================================== */
+/*TOP NAVIGATION*/
 .topnav{
   position:sticky;top:0;z-index:40;
   border-bottom:1px solid var(--glass-border);
@@ -154,9 +148,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
   .mobile-menu-btn{display:flex;}
 }
 
-/* ==========================================================================
-   TOOLTIP
-   ========================================================================== */
+/*TOOLTIP*/
 [data-tooltip]{position:relative;}
 [data-tooltip]::after{
   content:attr(data-tooltip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
@@ -167,9 +159,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 }
 [data-tooltip]:hover::after,[data-tooltip]:focus-visible::after{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ==========================================================================
-   MOBILE DRAWER (nav)
-   ========================================================================== */
+/*MOBILE DRAWER (nav)*/
 .drawer-overlay{
   position:fixed;inset:0;background:rgba(2,6,23,0.5);z-index:60;opacity:0;pointer-events:none;
   transition:opacity var(--dur-med) var(--ease);
@@ -253,9 +243,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .empty-state{text-align:center;padding:36px 12px;color:var(--text-soft);font-size:14px;}
 .empty-state svg{width:36px;height:36px;margin:0 auto 12px;opacity:0.5;}
 
-/* ==========================================================================
-   HERO
-   ========================================================================== */
+/*HERO*/
 .hero{position:relative;padding:76px 0 32px;text-align:center;overflow:hidden;}
 .hero-glow{
   position:absolute;top:-160px;left:50%;transform:translateX(-50%);
@@ -275,9 +263,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 }
 .hero p.lede{font-size:17px;color:var(--text-soft);margin:0 auto;max-width:520px;}
 
-/* ==========================================================================
-   SEARCH BOX
-   ========================================================================== */
+/*SEARCH BOX*/
 .search-shell{max-width:760px;margin:32px auto 0;position:relative;}
 .search-box{
   border-radius:var(--radius-lg);padding:8px;position:relative;transition:border-color var(--dur-fast) var(--ease),box-shadow var(--dur-fast) var(--ease);
@@ -347,9 +333,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .ac-item .ac-remove{width:28px;height:28px;flex-shrink:0;opacity:0;}
 .ac-item:hover .ac-remove{opacity:1;}
 
-/* ==========================================================================
+/*
    SEARCH MODES
-   ========================================================================== */
+   */
 .modes-shell{max-width:900px;margin:22px auto 0;}
 .modes-row{
   display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin;justify-content:center;flex-wrap:wrap;
@@ -365,9 +351,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .mode-btn[aria-selected="true"]{background:var(--accent-dim);border-color:var(--accent-border);color:var(--accent);}
 .mode-desc{text-align:center;font-size:13px;color:var(--text-soft);margin-top:10px;min-height:18px;}
 
-/* ==========================================================================
-   SECTIONS SHARED
-   ========================================================================== */
+/*SECTIONS SHARED*/
 .section{padding:56px 0;}
 .section-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:24px;gap:12px;}
 .section-head h2{font-size:22px;margin:0;letter-spacing:-0.01em;}
@@ -417,9 +401,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
   .feature-grid{grid-template-columns:1fr;}
 }
 
-/* ==========================================================================
-   FOOTER
-   ========================================================================== */
+/*FOOTER*/
 .site-footer{border-top:1px solid var(--border-subtle);padding:28px 0;}
 .footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .footer-links{display:flex;flex-wrap:wrap;gap:4px;}
@@ -431,9 +413,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .footer-left{font-size:13px;color:var(--text-soft);}
 .footer-right{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--text-soft);}
 
-/* ==========================================================================
-   MODALS
-   ========================================================================== */
+/*MODALS*/
 .modal-overlay{
   position:fixed;inset:0;background:rgba(2,6,23,0.55);z-index:70;display:flex;align-items:center;justify-content:center;
   padding:20px;opacity:0;pointer-events:none;transition:opacity var(--dur-med) var(--ease);
@@ -511,9 +491,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .progress-track{height:6px;background:var(--surface-muted);border-radius:var(--radius-full);overflow:hidden;margin-top:12px;}
 .progress-fill{height:100%;background:var(--accent);border-radius:var(--radius-full);transition:width 120ms linear;}
 
-/* ==========================================================================
-   ADVANCED FILTERS PANEL
-   ========================================================================== */
+/*ADVANCED FILTERS PANEL*/
 .filters-panel{
   max-width:760px;margin:14px auto 0;overflow:hidden;max-height:0;opacity:0;
   transition:max-height var(--dur-med) var(--ease),opacity var(--dur-med) var(--ease),margin var(--dur-med) var(--ease);
@@ -527,9 +505,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
 @media (max-width:760px){.filters-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:520px){.filters-grid{grid-template-columns:1fr;}}
 
-/* ==========================================================================
-   RESULTS VIEW
-   ========================================================================== */
+/*RESULTS VIEW*/
 .results-view{display:none;padding:24px 0 60px;}
 .results-view.active{display:block;}
 .hero,.modes-shell,.section{transition:opacity var(--dur-med) var(--ease);}
@@ -615,9 +591,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-vis
   .search-secondary-row{justify-content:flex-start;}
   .privacy-band{padding:24px;}
 }
-/* ==========================================================================
-   SEARXNG INTEGRATION — ADDITIONS
-   ========================================================================== */
+/*SEARXNG INTEGRATION — ADDITIONS*/
 
 /* Data-source mode badge (Local Demo / Live SearXNG) */
 .data-mode-badge{

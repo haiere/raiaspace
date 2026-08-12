@@ -18,21 +18,51 @@ file server. No dependencies to install.
 
 ## Local Demo vs. Live SearXNG
 
-RaiaSpace starts in **Local Demo** mode: every search returns bundled sample
-results, clearly labeled "Sample result," and nothing leaves the browser.
+**RaiaSpace defaults to Live SearXNG**, pointed at `http://localhost:8080`. It
+is not a demo by default — on load it quietly checks that instance and shows
+a real connection status. If nothing is running there yet, you'll see an
+honest error screen (not fake results) until you either start a real instance
+or point RaiaSpace at one you already run.
 
-To use real results, connect a SearXNG instance from **Settings → SearXNG
-connection**:
+**Local Demo** mode still exists, but only as an explicit, clearly-labeled
+opt-in for offline UI testing — flip it on yourself from Settings if you want
+to browse the interface without a backend. RaiaSpace never mixes the two: the
+mode badge in the nav always shows which one is active, and results are
+always tagged accordingly.
 
-1. Enter your instance URL (e.g. `http://localhost:8080`).
-2. Click **Test connection** to confirm it's reachable and returns JSON.
-3. Click **Save URL**.
-4. Flip the **Live SearXNG** switch on.
+### Get a real instance running in under a minute
 
-A badge in the top-right nav always shows which mode is currently active, so
-results are never shown without making clear where they came from.
+The fastest path to genuinely working search is a local SearXNG instance with
+JSON already enabled — most public instances deliberately disable JSON to
+discourage scraping, so pointing RaiaSpace at a random public instance from a
+list is unlikely to work reliably. Self-hosting is the reliable option:
 
-If no URL has ever been saved, RaiaSpace defaults to Local Demo automatically.
+```bash
+mkdir searxng && cd searxng
+cat > docker-compose.yml << 'EOF'
+services:
+  searxng:
+    image: docker.io/searxng/searxng:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:8080/
+    volumes:
+      - ./searxng-data:/etc/searxng
+EOF
+docker compose up -d
+```
+
+On first run SearXNG writes a default `settings.yml` into `./searxng-data`.
+Edit it to enable JSON (see below), then:
+
+```bash
+docker compose restart
+```
+
+Open RaiaSpace — it will already be pointed at `http://localhost:8080` and
+should connect on its own. If you use a different port or a remote host,
+update the URL in **Settings → SearXNG connection**.
 
 ## SearXNG setup
 
@@ -52,7 +82,8 @@ search:
 ```
 
 Without this, SearXNG returns HTTP 403 for JSON requests, and RaiaSpace will
-show a "JSON format unavailable" status rather than silently failing.
+show a "JSON format unavailable" status rather than silently failing or
+falling back to fake data.
 
 Your instance must also allow cross-origin requests from wherever RaiaSpace is
 served (CORS). For local development, the simplest options are:
