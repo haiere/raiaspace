@@ -2,650 +2,673 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>RaiaSpace Search — Private web, image, video, and AI search</title>
-    <meta name="description" content="RaiaSpace Search is a private, minimal search interface for web, images, video, news, and AI—fast, clean, and configurable with SearXNG." />
-    <link rel="canonical" href="https://haiere.github.io/raiaspace/" />
-    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
-    <meta name="theme-color" content="#0b1220" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Primary SEO -->
+    <title>RaiaSpace Search v0.1.4 — Private Web, Image, Video & AI Search</title>
+    <meta name="description" content="RaiaSpace Search v0.1.4 is a private, minimal search interface for web, images, videos, news and AI. Fast, clean, ad-free, powered by your own SearXNG instance." />
+    <meta name="keywords" content="RaiaSpace, private search, SearXNG, meta search, image search, video search, AI search, privacy search engine, ad-free search" />
+    <meta name="author" content="Hajir Studio" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="generator" content="RaiaSpace Search v0.1.4" />
+    <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f1f5f9" media="(prefers-color-scheme: light)" />
+    <link rel="canonical" href="https://hajir.is-a.dev/raiaspace/" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="RaiaSpace" />
-    <meta property="og:title" content="RaiaSpace Search — Private web, image, video, and AI search" />
-    <meta property="og:description" content="Private, minimal search across web, images, video, news, and AI with configurable SearXNG." />
-    <meta property="og:url" content="https://haiere.github.io/raiaspace/" />
+    <meta property="og:title" content="RaiaSpace Search v0.1.4 — Private web, image, video & AI search" />
+    <meta property="og:description" content="Private, minimal search across web, images, videos, news and AI. Powered by your own SearXNG instance." />
+    <meta property="og:url" content="https://hajir.is-a.dev/raiaspace/" />
     <meta property="og:image" content="https://i.postimg.cc/GmWt2wch/H-blue.webp" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="RaiaSpace Search — Private web, image, video, and AI search" />
-    <meta name="twitter:description" content="Private, minimal search across web, images, video, news, and AI with configurable SearXNG." />
-    <meta name="twitter:image" content="https://i.postimg.cc/GmWt2wch/H-blue.webp" />
-    <link rel="preconnect" href="https://haiere.github.io/raiaspace" />
+    <meta property="og:image:alt" content="RaiaSpace Search interface preview" />
+    <meta property="og:locale" content="en_US" />
 
-    <link rel="stylesheet" href="style.css">
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RaiaSpace Search v0.1.4 — Private web, image, video & AI search" />
+    <meta name="twitter:description" content="Private, minimal search across web, images, videos, news and AI. Powered by your own SearXNG instance." />
+    <meta name="twitter:image" content="https://i.postimg.cc/GmWt2wch/H-blue.webp" />
+    <meta name="twitter:creator" content="@hajirstudio" />
+
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='14' cy='14' r='9' fill='none' stroke='%233b82f6' stroke-width='2.5'/%3E%3Cpath d='M20.5 20.5 L27 27' stroke='%233b82f6' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/GmWt2wch/H-blue.webp" />
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://i.postimg.cc" crossorigin />
+    <link rel="dns-prefetch" href="https://i.postimg.cc" />
+
+    <!-- Structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://hajir.is-a.dev/raiaspace/#website",
+          "url": "https://hajir.is-a.dev/raiaspace/",
+          "name": "RaiaSpace Search",
+          "description": "Private, minimal search across web, images, videos, news and AI.",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://hajir.is-a.dev/raiaspace/#org" },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://hajir.is-a.dev/raiaspace/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://hajir.is-a.dev/raiaspace/#org",
+          "name": "RaiaSpace",
+          "url": "https://hajir.is-a.dev/raiaspace/",
+          "logo": "https://i.postimg.cc/GmWt2wch/H-blue.webp"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "RaiaSpace Search",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Any",
+          "softwareVersion": "0.1.4",
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        }
+      ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <!--  
-    TOP NAVIGATION
-      -->
-    <header class="topnav" role="banner">
-        <div class="topnav-inner">
+<!-- ============ TOP NAV ============ -->
+<header class="topnav" role="banner">
+    <div class="topnav-inner">
 
-            <!-- Brand -->
-            <a href="#" class="brand" id="logoHome" aria-label="RaiaSpace home">
-                <svg class="brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="14" cy="14" r="9"/>
-                    <path d="M20.5 20.5 L27 27"/>
+        <a href="#" class="brand" id="logoHome" aria-label="RaiaSpace home">
+            <svg class="brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="14" cy="14" r="9"/>
+                <path d="M20.5 20.5 L27 27"/>
+            </svg>
+            <span class="brand-name">RaiaSpace</span>
+            <span class="brand-version">v0.1.4</span>
+        </a>
+
+        <nav class="nav-center" aria-label="Main navigation">
+            <button type="button" class="nav-link" data-nav-mode="web" aria-current="page">Search</button>
+            <button type="button" class="nav-link" data-nav-mode="images">Images</button>
+            <button type="button" class="nav-link" data-nav-mode="videos">Videos</button>
+            <button type="button" class="nav-link" data-nav-mode="news">News</button>
+            <button type="button" class="nav-link" data-nav-mode="ai">AI</button>
+
+            <div class="nav-more">
+                <button type="button" class="nav-link nav-more-btn" id="navMoreBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navMoreMenu">
+                    More
+                    <svg class="nav-more-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="menu-dropdown" id="navMoreMenu" role="menu" hidden>
+                    <button type="button" class="menu-item" data-nav-mode="maps" role="menuitem">Maps</button>
+                    <button type="button" class="menu-item" data-nav-mode="shopping" role="menuitem">Shopping</button>
+                    <button type="button" class="menu-item" data-nav-mode="academic" role="menuitem">Academic</button>
+                    <button type="button" class="menu-item" data-nav-mode="social" role="menuitem">Social</button>
+                    <button type="button" class="menu-item" data-nav-mode="files" role="menuitem">Files</button>
+                    <div class="menu-divider"></div>
+                    <button type="button" class="menu-item" data-nav-mode="web" role="menuitem">Web</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="nav-right">
+            <a href="https://buymeacoffee.com/hajirstudio" target="_blank" rel="noopener noreferrer" class="icon-btn donate-icon-btn" aria-label="Support RaiaSpace — Buy me a coffee" data-tooltip="Support us">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
                 </svg>
-                <span class="brand-name">RaiaSpace</span>
             </a>
 
-            <!-- Desktop Navigation -->
-            <nav class="nav-center" aria-label="Main navigation">
-                <button type="button" class="nav-link" data-nav-mode="web" aria-current="page">Search</button>
-                <button type="button" class="nav-link" data-nav-mode="images">Images</button>
-                <button type="button" class="nav-link" data-nav-mode="videos">Videos</button>
-                <button type="button" class="nav-link" data-nav-mode="news">News</button>
-                <button type="button" class="nav-link" data-nav-mode="ai">AI</button>
+            <button class="icon-btn" id="historyBtn" aria-label="Search history" data-tooltip="History">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3.5 2"/>
+                </svg>
+            </button>
 
-                <!-- More dropdown -->
-                <div class="nav-more">
-                    <button type="button" class="nav-link nav-more-btn" id="navMoreBtn" aria-haspopup="true" aria-expanded="false" aria-controls="navMoreMenu">
-                        More
-                        <svg class="nav-more-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                    </button>
-                    <div class="menu-dropdown menu-dropdown nav-more-menu" id="navMoreMenu" role="menu" hidden>
-                        <button type="button" class="menu-item" data-nav-mode="maps" role="menuitem">Maps</button>
-                        <button type="button" class="menu-item" data-nav-mode="shopping" role="menuitem">Shopping</button>
-                        <button type="button" class="menu-item" data-nav-mode="academic" role="menuitem">Academic</button>
-                        <button type="button" class="menu-item" data-nav-mode="social" role="menuitem">Social</button>
-                        <button type="button" class="menu-item" data-nav-mode="files" role="menuitem">Files</button>
-                        <div class="menu-divider"></div>
-                        <button type="button" class="menu-item" data-nav-mode="web" role="menuitem">Web</button>
-                    </div>
-                </div>
+            <button class="icon-btn" id="settingsBtn" aria-label="Settings" data-tooltip="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="2.5"/>
+                    <path d="M12 3v1M12 20v1M3 12H2M22 12h-1M5.6 5.6l.7.7M17.7 17.7l.7.7M5.6 18.4l.7-.7M17.7 6.3l.7-.7"/>
+                </svg>
+            </button>
+
+            <button class="signin-btn" id="signinBtnDesktop">Sign in</button>
+
+            <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-haspopup="dialog" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="drawer-overlay" id="mobileOverlay" aria-hidden="true"></div>
+<aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+    <div class="drawer-head">
+        <span class="brand" id="drawerTitle">
+            <svg class="brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="14" cy="14" r="9"/>
+                <path d="M20.5 20.5 L27 27"/>
+            </svg>
+            RaiaSpace
+            <span class="brand-version">v0.1.4</span>
+        </span>
+        <button class="icon-btn" id="mobileDrawerClose" aria-label="Close menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="drawer-body">
+        <div class="drawer-group">
+            <div class="drawer-group-title">Search</div>
+            <nav>
+                <button type="button" class="menu-item" data-nav-mode="web">Search</button>
+                <button type="button" class="menu-item" data-nav-mode="images">Images</button>
+                <button type="button" class="menu-item" data-nav-mode="videos">Videos</button>
+                <button type="button" class="menu-item" data-nav-mode="news">News</button>
+                <button type="button" class="menu-item" data-nav-mode="ai">AI</button>
             </nav>
-
-            <!-- Right side -->
-            <div class="nav-right">
-                <span class="data-mode-badge" id="dataModeBadge">
-                    <span class="dm-dot"></span>
-                    <span id="dataModeBadgeText">Local Demo</span>
-                </span>
-
-                <button class="icon-btn" id="historyBtn" aria-label="Search history" data-tooltip="History">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="9"/>
-                        <path d="M12 7v5l3.5 2"/>
-                    </svg>
-                </button>
-
-                <button class="icon-btn" id="settingsBtn" aria-label="Settings" data-tooltip="Settings">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="2.5"/>
-                        <path d="M12 3v1M12 20v1M3 12H2M22 12h-1M5.6 5.6l.7.7M17.7 17.7l.7.7M5.6 18.4l.7-.7M17.7 6.3l.7-.7"/>
-                    </svg>
-                </button>
-
-                <button class="signin-btn" id="signinBtnDesktop">Sign in</button>
-
-                <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-haspopup="dialog" aria-expanded="false">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 7h16M4 12h16M4 17h16"/>
-                    </svg>
-                </button>
-            </div>
         </div>
-    </header>
 
-    <!--  
-    MOBILE DRAWER
-      -->
-    <div class="drawer-overlay" id="mobileOverlay" aria-hidden="true"></div>
-    <aside class="mobile-drawer" id="mobileDrawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
-        <div class="drawer-head">
-            <span class="brand" id="drawerTitle">
-                <svg class="brand-mark" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="14" cy="14" r="9"/>
-                    <path d="M20.5 20.5 L27 27"/>
-                </svg>
-                RaiaSpace
-            </span>
-            <button class="icon-btn" id="mobileDrawerClose" aria-label="Close menu">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 6 6 18M6 6l12 12"/>
-                </svg>
+        <div class="drawer-group">
+            <div class="drawer-group-title">Explore</div>
+            <button type="button" class="drawer-accordion-trigger" id="mobileMoreTrigger" aria-expanded="false" aria-controls="mobileMorePanel">
+                <span>More tools</span>
+                <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
             </button>
+            <div class="drawer-accordion-panel" id="mobileMorePanel" hidden>
+                <button type="button" class="menu-item" data-nav-mode="maps">Maps</button>
+                <button type="button" class="menu-item" data-nav-mode="shopping">Shopping</button>
+                <button type="button" class="menu-item" data-nav-mode="academic">Academic</button>
+                <button type="button" class="menu-item" data-nav-mode="social">Social</button>
+                <button type="button" class="menu-item" data-nav-mode="files">Files</button>
+            </div>
         </div>
 
-        <div class="drawer-body">
-
-            <div class="drawer-group">
-                <div class="drawer-group-title">Search</div>
-                <nav>
-                    <button type="button" class="menu-item" data-nav-mode="web">Search</button>
-                    <button type="button" class="menu-item" data-nav-mode="images">Images</button>
-                    <button type="button" class="menu-item" data-nav-mode="videos">Videos</button>
-                    <button type="button" class="menu-item" data-nav-mode="news">News</button>
-                    <button type="button" class="menu-item" data-nav-mode="ai">AI</button>
-                </nav>
-            </div>
-
-            <div class="drawer-group">
-                <div class="drawer-group-title">Explore</div>
-                <button type="button" class="drawer-accordion-trigger" id="mobileMoreTrigger" aria-expanded="false" aria-controls="mobileMorePanel">
-                    <span>More tools</span>
-                    <svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        <div class="drawer-group">
+            <div class="drawer-group-title">Tools</div>
+            <nav>
+                <button type="button" class="menu-item" id="mobileHistoryLink">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+                    History
                 </button>
-                <div class="drawer-accordion-panel" id="mobileMorePanel" hidden>
-                    <button type="button" class="menu-item" data-nav-mode="maps">Maps</button>
-                    <button type="button" class="menu-item" data-nav-mode="shopping">Shopping</button>
-                    <button type="button" class="menu-item" data-nav-mode="academic">Academic</button>
-                    <button type="button" class="menu-item" data-nav-mode="social">Social</button>
-                    <button type="button" class="menu-item" data-nav-mode="files">Files</button>
-                </div>
-            </div>
-
-            <div class="drawer-group">
-                <div class="drawer-group-title">Tools</div>
-                <nav>
-                    <button type="button" class="menu-item" id="mobileHistoryLink">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
-                        History
-                    </button>
-                    <button type="button" class="menu-item" id="mobileSettingsLink">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"/><path d="M12 3v1M12 20v1M3 12H2M22 12h-1M5.6 5.6l.7.7M17.7 17.7l.7.7M5.6 18.4l.7-.7M17.7 6.3l.7-.7"/></svg>
-                        Settings
-                    </button>
-                    <button type="button" class="menu-item" id="signinBtnMobile">Sign in</button>
-                </nav>
-            </div>
-
-            <div class="drawer-group">
-                <div class="drawer-group-title">Theme</div>
-                <div class="seg-group" id="mobileThemeSeg">
-                    <button type="button" class="seg-btn" data-theme-choice="light" aria-pressed="false">Light</button>
-                    <button type="button" class="seg-btn" data-theme-choice="dark" aria-pressed="false">Dark</button>
-                    <button type="button" class="seg-btn" data-theme-choice="system" aria-pressed="false">System</button>
-                </div>
-            </div>
-
-        </div>
-    </aside>
-
-    <!--  
-    SETTINGS DRAWER
-      -->
-    <div class="drawer-overlay" id="settingsOverlay" aria-hidden="true"></div>
-    <aside class="side-drawer" id="settingsDrawer" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-        <div class="drawer-head">
-            <h2 id="settingsTitle">Settings</h2>
-            <button class="icon-btn" id="settingsClose" aria-label="Close settings">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-            </button>
-        </div>
-
-        <div class="drawer-body">
-
-            <!-- Theme -->
-            <div class="settings-section-title">Appearance</div>
-            <div class="setting-row">
-                <div><div class="setting-label">Theme</div><div class="setting-sub">Choose light, dark, or system default</div></div>
-                <div class="seg-group" id="themeSeg">
-                    <button type="button" class="seg-btn" data-theme-choice="light" aria-pressed="false">Light</button>
-                    <button type="button" class="seg-btn" data-theme-choice="dark" aria-pressed="false">Dark</button>
-                    <button type="button" class="seg-btn" data-theme-choice="system" aria-pressed="false">System</button>
-                </div>
-            </div>
-
-            <div class="setting-row">
-                <div><div class="setting-label">Reduced motion</div><div class="setting-sub">Minimize animations and transitions</div></div>
-                <div class="switch">
-                    <input type="checkbox" id="toggleReducedMotion" aria-label="Toggle reduced motion">
-                    <span class="switch-track"></span>
-                    <span class="switch-thumb"></span>
-                </div>
-            </div>
-
-            <!-- Data source -->
-            <div class="settings-section-title">Search engine</div>
-
-            <div class="setting-row">
-                <div><div class="setting-label">Live SearXNG</div><div class="setting-sub" id="dataSourceSub">Using Local Demo data</div></div>
-                <div class="switch">
-                    <input type="checkbox" id="toggleLiveSearxng" aria-label="Enable live SearXNG">
-                    <span class="switch-track"></span>
-                    <span class="switch-thumb"></span>
-                </div>
-            </div>
-
-            <div style="margin-top:6px;">
-                <div class="url-field-row">
-                    <input type="text" class="select-field" id="searxngUrlInput" placeholder="http://localhost:8080" value="http://localhost:8080" aria-label="SearXNG instance URL">
-                </div>
-                <div class="settings-btn-row">
-                    <button type="button" class="btn btn-ghost" id="testSearxngBtn">Test</button>
-                    <button type="button" class="btn btn-primary" id="saveSearxngBtn">Save</button>
-                    <button type="button" class="btn btn-ghost" id="resetSearxngBtn">Reset</button>
-                </div>
-                <div class="status-pill" id="searxngStatusPill">
-                    <span id="searxngStatusText">Not tested</span>
-                </div>
-                <div class="https-warn" id="httpsWarnBanner" hidden>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
-                    <span>This page is served over HTTPS, but the SearXNG URL uses HTTP. Your browser may block mixed content. Use an HTTPS SearXNG instance or deploy this page over HTTP.</span>
-                </div>
-
-                <div class="accordion" id="setupAccordion">
-                    <button type="button" class="accordion-head" id="setupAccordionHead" aria-expanded="false">
-                        <span>📘 How to set up SearXNG</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                    </button>
-                    <div class="accordion-body">
-                        <div class="accordion-body-inner">
-                            <p>RaiaSpace connects to a <strong>SearXNG</strong> instance for live search results. To use it:</p>
-                            <ol style="margin:4px 0 0 18px;padding:0;">
-                                <li>Install SearXNG locally or use a public instance.</li>
-                                <li>Enable JSON output in <code>settings.yml</code>:</li>
-                            </ol>
-                            <div class="code-block">search:
-                                format: json
-                            </div>
-                            <ol start="3">
-                                <li>Enter the base URL above (e.g. <code>http://localhost:8080</code>) and click <strong>Save</strong>.</li>
-                                <li>Toggle <strong>Live SearXNG</strong> to enable it.</li>
-                            </ol>
-                            <p style="margin-top:8px;">All search queries are sent directly to your SearXNG instance. RaiaSpace does not proxy or log your searches.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Privacy -->
-            <div class="settings-section-title">Privacy &amp; data</div>
-
-            <div class="setting-row">
-                <div><div class="setting-label">Safe search</div><div class="setting-sub">Filter explicit results when available</div></div>
-                <div class="switch">
-                    <input type="checkbox" id="toggleSafeSearch" checked aria-label="Toggle safe search">
-                    <span class="switch-track"></span>
-                    <span class="switch-thumb"></span>
-                </div>
-            </div>
-
-            <div class="setting-row">
-                <div><div class="setting-label">Suggestions</div><div class="setting-sub">Show autocomplete suggestions while typing</div></div>
-                <div class="switch">
-                    <input type="checkbox" id="toggleSuggestions" checked aria-label="Toggle suggestions">
-                    <span class="switch-track"></span>
-                    <span class="switch-thumb"></span>
-                </div>
-            </div>
-
-            <div class="setting-row">
-                <div><div class="setting-label">Save history</div><div class="setting-sub">Store your recent searches locally</div></div>
-                <div class="switch">
-                    <input type="checkbox" id="toggleSaveHistory" checked aria-label="Toggle save history">
-                    <span class="switch-track"></span>
-                    <span class="switch-thumb"></span>
-                </div>
-            </div>
-
-            <div style="margin-top:4px;">
-                <button type="button" class="danger-btn" id="clearHistoryFromSettings">Clear all search history</button>
-            </div>
-
-            <div style="margin-top:12px;">
-                <button type="button" class="btn btn-ghost" id="openPrivacyDialogBtn" style="width:100%;">Privacy &amp; data policy</button>
-            </div>
-
-            <!-- Language & region -->
-            <div class="settings-section-title">Regional</div>
-
-            <div class="setting-row">
-                <div><div class="setting-label">Search language</div><div class="setting-sub">Preferred language for results</div></div>
-                <select class="select-field" id="languageSelect" style="width:auto;min-width:100px;">
-                    <option value="English">English</option>
-                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                    <option value="Spanish">Spanish</option>
-                    <option value="Japanese">Japanese</option>
-                    <option value="Any language">Any language</option>
-                </select>
-            </div>
-
-            <div class="setting-row" style="border-bottom:none;">
-                <div><div class="setting-label">Region</div><div class="setting-sub">Region-specific search results</div></div>
-                <select class="select-field" id="regionSelect" style="width:auto;min-width:100px;">
-                    <option value="Automatic">Automatic</option>
-                    <option value="US">United States</option>
-                    <option value="GB">United Kingdom</option>
-                    <option value="ID">Indonesia</option>
-                    <option value="JP">Japan</option>
-                    <option value="DE">Germany</option>
-                    <option value="FR">France</option>
-                </select>
-            </div>
-
-        </div>
-    </aside>
-
-    <!--  
-    HISTORY DRAWER
-      -->
-    <div class="drawer-overlay" id="historyOverlay" aria-hidden="true"></div>
-    <aside class="side-drawer" id="historyDrawer" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
-        <div class="drawer-head">
-            <h2 id="historyTitle">Search history</h2>
-            <button class="icon-btn" id="historyClose" aria-label="Close history">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-            </button>
-        </div>
-        <div class="drawer-body">
-            <div id="historyList"></div>
-            <button type="button" class="danger-btn" id="clearAllHistory">Clear all history</button>
-        </div>
-    </aside>
-
-    <!--  
-    VOICE MODAL
-      -->
-    <div class="modal-overlay" id="voiceOverlay" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="voiceTitle">
-            <div class="modal-head">
-                <h2 id="voiceTitle">Voice search</h2>
-                <button class="icon-btn" id="voiceClose" aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                <button type="button" class="menu-item" id="mobileSettingsLink">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.5"/><path d="M12 3v1M12 20v1M3 12H2M22 12h-1M5.6 5.6l.7.7M17.7 17.7l.7.7M5.6 18.4l.7-.7M17.7 6.3l.7-.7"/></svg>
+                    Settings
                 </button>
-            </div>
-            <div class="modal-body" id="voiceModalBody">
-                <div class="voice-visual" id="voiceVisual">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-                </div>
-                <div class="voice-status" id="voiceStatus">Tap start and allow microphone access.</div>
-                <div class="voice-transcript" id="voiceTranscript">Your recognized speech will appear here…</div>
-                <div class="modal-btn-row">
-                    <button type="button" class="btn btn-ghost" id="voiceCancelBtn">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="voiceStartBtn">Start listening</button>
-                </div>
+                <a href="https://buymeacoffee.com/hajirstudio" target="_blank" rel="noopener noreferrer" class="menu-item" style="text-decoration:none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+                    Support us
+                </a>
+                <button type="button" class="menu-item" id="signinBtnMobile">Sign in</button>
+            </nav>
+        </div>
+
+        <div class="drawer-group">
+            <div class="drawer-group-title">Theme</div>
+            <div class="seg-group" id="mobileThemeSeg">
+                <button type="button" class="seg-btn" data-theme-choice="light" aria-pressed="false">Light</button>
+                <button type="button" class="seg-btn" data-theme-choice="dark" aria-pressed="false">Dark</button>
+                <button type="button" class="seg-btn" data-theme-choice="system" aria-pressed="false">System</button>
             </div>
         </div>
     </div>
+</aside>
 
-    <!--  
-    IMAGE SEARCH MODAL
-      -->
-    <div class="modal-overlay" id="imageModalOverlay" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="imageTitle">
-            <div class="modal-head">
-                <h2 id="imageTitle">Search with image</h2>
-                <button class="icon-btn" id="imageModalClose" aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p style="font-size:14px;color:var(--text-soft);margin:0 0 12px;">Upload an image to search visually. Supported: PNG, JPEG, WebP</p>
-                <div class="dropzone" id="imageDropzone" role="button" tabindex="0" aria-label="Click to upload an image">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5-11 11"/></svg>
-                    <p>Drop an image here, or <span class="dz-em">click to browse</span></p>
-                </div>
-                <input type="file" class="file-input-hidden" id="imageFileInput" accept="image/png,image/jpeg,image/webp">
-                <div id="imagePreviewArea"></div>
-                <input type="text" class="prompt-field" id="imagePromptField" placeholder="Optional: describe what you're looking for…">
-                <div class="modal-btn-row" style="margin-top:14px;">
-                    <button type="button" class="btn btn-ghost" id="imageCancelBtn">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="imageSearchSubmitBtn" disabled>Search</button>
-                </div>
-            </div>
-        </div>
+<!-- ============ SETTINGS DRAWER ============ -->
+<div class="drawer-overlay" id="settingsOverlay" aria-hidden="true"></div>
+<aside class="side-drawer" id="settingsDrawer" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="drawer-head">
+        <h2 id="settingsTitle">Settings</h2>
+        <button class="icon-btn" id="settingsClose" aria-label="Close settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
     </div>
 
-    <!--  
-    FILE UPLOAD MODAL
-      -->
-    <div class="modal-overlay" id="fileModalOverlay" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="fileTitle">
-            <div class="modal-head">
-                <h2 id="fileTitle">Upload a document</h2>
-                <button class="icon-btn" id="fileModalClose" aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p style="font-size:14px;color:var(--text-soft);margin:0 0 12px;">Upload a document to search within it. Supported: PDF, DOCX, TXT, CSV, MD, images</p>
-                <div class="dropzone" id="fileDropzone" role="button" tabindex="0" aria-label="Click to upload a file">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
-                    <p>Drop a file here, or <span class="dz-em">click to browse</span></p>
-                </div>
-                <input type="file" class="file-input-hidden" id="genericFileInput" accept=".pdf,.docx,.txt,.csv,.md,.png,.jpg,.jpeg,.webp,.gif">
-                <div id="filePreviewArea"></div>
-                <div class="modal-btn-row" style="margin-top:14px;">
-                    <button type="button" class="btn btn-ghost" id="fileCancelBtn">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="fileSearchSubmitBtn" disabled>Search</button>
-                </div>
+    <div class="drawer-body">
+
+        <div class="settings-section-title">Appearance</div>
+        <div class="setting-row">
+            <div><div class="setting-label">Theme</div><div class="setting-sub">Choose light, dark, or system default</div></div>
+            <div class="seg-group" id="themeSeg">
+                <button type="button" class="seg-btn" data-theme-choice="light" aria-pressed="false">Light</button>
+                <button type="button" class="seg-btn" data-theme-choice="dark" aria-pressed="false">Dark</button>
+                <button type="button" class="seg-btn" data-theme-choice="system" aria-pressed="false">System</button>
             </div>
         </div>
-    </div>
 
-    <!--  
-    CAMERA MODAL
-      -->
-    <div class="modal-overlay" id="cameraModalOverlay" aria-hidden="true">
-        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cameraTitle">
-            <div class="modal-head">
-                <h2 id="cameraTitle">Camera search</h2>
-                <button class="icon-btn" id="cameraModalClose" aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
+        <div class="setting-row">
+            <div><div class="setting-label">Reduced motion</div><div class="setting-sub">Minimize animations and transitions</div></div>
+            <div class="switch">
+                <input type="checkbox" id="toggleReducedMotion" aria-label="Toggle reduced motion">
+                <span class="switch-track"></span>
+                <span class="switch-thumb"></span>
             </div>
-            <div class="modal-body">
-                <div id="cameraContent">
-                    <p style="font-size:14px;color:var(--text-soft);margin:0 0 16px;">Allow camera access to capture a photo and search with it.</p>
-                    <div class="modal-btn-row">
-                        <button type="button" class="btn btn-ghost" id="camUploadFallback">Upload image instead</button>
-                        <button type="button" class="btn btn-primary" id="camRequestBtn">Enable camera</button>
+        </div>
+
+        <div class="settings-section-title">Search engine</div>
+        <div class="setting-row">
+            <div><div class="setting-label">SearXNG instance URL</div><div class="setting-sub" id="dataSourceSub">All queries are proxied to this instance</div></div>
+        </div>
+        <div style="margin-top:6px;">
+            <div class="url-field-row">
+                <input type="text" class="select-field" id="searxngUrlInput" placeholder="https://searx.example.com" aria-label="SearXNG instance URL">
+            </div>
+            <div class="settings-btn-row">
+                <button type="button" class="btn btn-ghost" id="testSearxngBtn">Test</button>
+                <button type="button" class="btn btn-primary" id="saveSearxngBtn">Save</button>
+                <button type="button" class="btn btn-ghost" id="resetSearxngBtn">Reset</button>
+            </div>
+            <div class="status-pill" id="searxngStatusPill">
+                <span id="searxngStatusText">Not tested</span>
+            </div>
+            <div class="https-warn" id="httpsWarnBanner" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+                <span>This page is served over HTTPS but the SearXNG URL uses HTTP. Your browser may block mixed content. Use an HTTPS instance, or deploy this page over HTTP.</span>
+            </div>
+
+            <div class="accordion" id="setupAccordion">
+                <button type="button" class="accordion-head" id="setupAccordionHead" aria-expanded="false">
+                    <span>How to set up SearXNG</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="accordion-body">
+                    <div class="accordion-body-inner">
+                        <p>RaiaSpace connects to a <strong>SearXNG</strong> instance for live results. To use it:</p>
+                        <ol style="margin:4px 0 0 18px;padding:0;">
+                            <li>Install SearXNG locally or pick a public instance that allows JSON output.</li>
+                            <li>Ensure JSON output is enabled in <code>settings.yml</code>:</li>
+                        </ol>
+                        <div class="code-block">search:
+    formats:
+        - html
+        - json</div>
+                        <ol start="3">
+                            <li>Enter the base URL above (e.g. <code>https://searx.be</code>) and click <strong>Save</strong>.</li>
+                            <li>Click <strong>Test</strong> to verify the connection.</li>
+                        </ol>
+                        <p style="margin-top:8px;">Search queries are sent directly to your SearXNG instance. RaiaSpace does not proxy or log your searches.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--  
-    SHORTCUTS MODAL
-      -->
-    <div class="modal-overlay" id="shortcutsOverlay" aria-hidden="true">
-        <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
-            <div class="modal-head">
-                <h2 id="shortcutsTitle">Keyboard shortcuts</h2>
-                <button class="icon-btn" id="shortcutsClose" aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
+        <div class="settings-section-title">Privacy &amp; data</div>
+        <div class="setting-row">
+            <div><div class="setting-label">Safe search</div><div class="setting-sub">Filter explicit results when available</div></div>
+            <div class="switch">
+                <input type="checkbox" id="toggleSafeSearch" checked aria-label="Toggle safe search">
+                <span class="switch-track"></span>
+                <span class="switch-thumb"></span>
             </div>
-            <div class="modal-body">
-                <div class="shortcut-row"><span>Focus search</span><span class="kbd">⌘K</span></div>
-                <div class="shortcut-row"><span>Open shortcuts</span><span class="kbd">⌘/</span></div>
-                <div class="shortcut-row"><span>Close modal / drawer</span><span class="kbd">Esc</span></div>
-                <div class="shortcut-row"><span>Submit search</span><span class="kbd">Enter</span></div>
+        </div>
+
+        <div class="setting-row">
+            <div><div class="setting-label">Suggestions</div><div class="setting-sub">Show autocomplete suggestions while typing</div></div>
+            <div class="switch">
+                <input type="checkbox" id="toggleSuggestions" checked aria-label="Toggle suggestions">
+                <span class="switch-track"></span>
+                <span class="switch-thumb"></span>
+            </div>
+        </div>
+
+        <div class="setting-row">
+            <div><div class="setting-label">Save history</div><div class="setting-sub">Store your recent searches locally</div></div>
+            <div class="switch">
+                <input type="checkbox" id="toggleSaveHistory" checked aria-label="Toggle save history">
+                <span class="switch-track"></span>
+                <span class="switch-thumb"></span>
+            </div>
+        </div>
+
+        <div style="margin-top:4px;">
+            <button type="button" class="danger-btn" id="clearHistoryFromSettings">Clear all search history</button>
+        </div>
+
+        <div style="margin-top:12px;">
+            <button type="button" class="btn btn-ghost" id="openPrivacyDialogBtn" style="width:100%;">Privacy &amp; data policy</button>
+        </div>
+
+        <div class="settings-section-title">Regional</div>
+        <div class="setting-row">
+            <div><div class="setting-label">Search language</div><div class="setting-sub">Preferred language for results</div></div>
+            <select class="select-field" id="languageSelect" style="width:auto;min-width:120px;">
+                <option value="English">English</option>
+                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Any language">Any language</option>
+            </select>
+        </div>
+
+        <div class="setting-row" style="border-bottom:none;">
+            <div><div class="setting-label">Region</div><div class="setting-sub">Region-specific search results</div></div>
+            <select class="select-field" id="regionSelect" style="width:auto;min-width:120px;">
+                <option value="Automatic">Automatic</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="ID">Indonesia</option>
+                <option value="JP">Japan</option>
+                <option value="DE">Germany</option>
+                <option value="FR">France</option>
+            </select>
+        </div>
+
+        <div class="settings-section-title">Support</div>
+        <a href="https://buymeacoffee.com/hajirstudio" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+            <span>Buy me a coffee</span>
+        </a>
+    </div>
+</aside>
+
+<!-- ============ HISTORY DRAWER ============ -->
+<div class="drawer-overlay" id="historyOverlay" aria-hidden="true"></div>
+<aside class="side-drawer" id="historyDrawer" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+    <div class="drawer-head">
+        <h2 id="historyTitle">Search history</h2>
+        <button class="icon-btn" id="historyClose" aria-label="Close history">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+    </div>
+    <div class="drawer-body">
+        <div id="historyList"></div>
+        <button type="button" class="danger-btn" id="clearAllHistory">Clear all history</button>
+    </div>
+</aside>
+
+<!-- ============ VOICE MODAL ============ -->
+<div class="modal-overlay" id="voiceOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="voiceTitle">
+        <div class="modal-head">
+            <h2 id="voiceTitle">Voice search</h2>
+            <button class="icon-btn" id="voiceClose" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="modal-body" id="voiceModalBody">
+            <div class="voice-visual" id="voiceVisual">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            </div>
+            <div class="voice-status" id="voiceStatus">Tap start and allow microphone access.</div>
+            <div class="voice-transcript" id="voiceTranscript">Your recognized speech will appear here…</div>
+            <div class="modal-btn-row">
+                <button type="button" class="btn btn-ghost" id="voiceCancelBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="voiceStartBtn">Start listening</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!--  
-    PRIVACY MODAL
-      -->
-    <div class="modal-overlay" id="privacyOverlay" aria-hidden="true">
-        <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
-            <div class="modal-head">
-                <h2 id="privacyTitle">Privacy &amp; data policy</h2>
-                <button class="icon-btn" id="privacyClose" aria-label="Close">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
+<!-- ============ IMAGE MODAL ============ -->
+<div class="modal-overlay" id="imageModalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="imageTitle">
+        <div class="modal-head">
+            <h2 id="imageTitle">Search with image</h2>
+            <button class="icon-btn" id="imageModalClose" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:14px;color:var(--text-soft);margin:0 0 12px;">Upload an image to search visually. Supported: PNG, JPEG, WebP</p>
+            <div class="dropzone" id="imageDropzone" role="button" tabindex="0" aria-label="Click to upload an image">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5-11 11"/></svg>
+                <p>Drop an image here, or <span class="dz-em">click to browse</span></p>
             </div>
-            <div class="modal-body">
-                <p style="margin-top:0;"><strong>RaiaSpace is built with privacy as a first principle.</strong></p>
-                <ul style="padding-left:20px;color:var(--text-soft);line-height:1.8;">
-                    <li>No search queries are sent to RaiaSpace servers.</li>
-                    <li>All searches go directly to your configured SearXNG instance.</li>
-                    <li>Search history and settings are stored locally in your browser.</li>
-                    <li>No cookies, trackers, or analytics are used.</li>
-                    <li>You can clear your local data at any time.</li>
-                </ul>
-                <p style="margin-bottom:0;">RaiaSpace is open source. You can review the code and run it yourself.</p>
+            <input type="file" class="file-input-hidden" id="imageFileInput" accept="image/png,image/jpeg,image/webp">
+            <div id="imagePreviewArea"></div>
+            <input type="text" class="prompt-field" id="imagePromptField" placeholder="Optional: describe what you're looking for…">
+            <div class="modal-btn-row" style="margin-top:14px;">
+                <button type="button" class="btn btn-ghost" id="imageCancelBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="imageSearchSubmitBtn" disabled>Search</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!--  
-    HOME VIEW
-      -->
-    <main id="homeView">
+<!-- ============ FILE MODAL ============ -->
+<div class="modal-overlay" id="fileModalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="fileTitle">
+        <div class="modal-head">
+            <h2 id="fileTitle">Upload a document</h2>
+            <button class="icon-btn" id="fileModalClose" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:14px;color:var(--text-soft);margin:0 0 12px;">Upload a document to search within it. Supported: PDF, DOCX, TXT, CSV, MD, images</p>
+            <div class="dropzone" id="fileDropzone" role="button" tabindex="0" aria-label="Click to upload a file">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
+                <p>Drop a file here, or <span class="dz-em">click to browse</span></p>
+            </div>
+            <input type="file" class="file-input-hidden" id="genericFileInput" accept=".pdf,.docx,.txt,.csv,.md,.png,.jpg,.jpeg,.webp,.gif">
+            <div id="filePreviewArea"></div>
+            <div class="modal-btn-row" style="margin-top:14px;">
+                <button type="button" class="btn btn-ghost" id="fileCancelBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="fileSearchSubmitBtn" disabled>Search</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <!-- Hero -->
-        <section class="hero">
-            <div class="hero-glow" aria-hidden="true"></div>
-            <div class="hero-inner wrap">
-                <div class="status-badge"><span class="dot"></span> Private search · 0 trackers</div>
-                <h1>Search beyond the obvious.</h1>
-                <p class="lede">Explore the web with a faster, cleaner, and more intelligent search experience.</p>
+<!-- ============ CAMERA MODAL ============ -->
+<div class="modal-overlay" id="cameraModalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="cameraTitle">
+        <div class="modal-head">
+            <h2 id="cameraTitle">Camera search</h2>
+            <button class="icon-btn" id="cameraModalClose" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div id="cameraContent"></div>
+        </div>
+    </div>
+</div>
 
-                <!-- Search -->
-                <div class="search-shell">
-                    <form id="searchForm" class="search-box glass" role="search" novalidate>
-                        <div class="search-main-row">
-                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                            <textarea class="search-input" id="searchInput" placeholder="Search the web, ask a question, or paste a link…" rows="1" aria-label="Search query"></textarea>
-                            <div class="search-actions">
-                                <button type="button" class="icon-btn clear-btn" id="clearInputBtn" aria-label="Clear search">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                                </button>
-                                <button type="submit" class="submit-btn" id="submitBtn" aria-label="Search" disabled>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="search-secondary-row">
-                            <button type="button" class="chip-btn" id="voiceBtn"><span>Voice</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
-                            <button type="button" class="chip-btn" id="imageSearchBtn"><span>Image</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5-11 11"/></svg></button>
-                            <button type="button" class="chip-btn" id="fileUploadBtn"><span>File</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></button>
-                            <button type="button" class="chip-btn" id="cameraSearchBtn"><span>Camera</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
-                            <span class="spacer"></span>
-                            <button type="button" class="chip-btn" id="filtersToggleBtn" aria-expanded="false">
-                                <span>Filters</span>
-                                <span class="filter-count" id="filterCount" hidden>0</span>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+<!-- ============ SHORTCUTS MODAL ============ -->
+<div class="modal-overlay" id="shortcutsOverlay" aria-hidden="true">
+    <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="shortcutsTitle">
+        <div class="modal-head">
+            <h2 id="shortcutsTitle">Keyboard shortcuts</h2>
+            <button class="icon-btn" id="shortcutsClose" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="shortcut-row"><span>Focus search</span><span class="kbd">⌘K / Ctrl K</span></div>
+            <div class="shortcut-row"><span>Open shortcuts</span><span class="kbd">⌘/ / Ctrl /</span></div>
+            <div class="shortcut-row"><span>Close modal / drawer</span><span class="kbd">Esc</span></div>
+            <div class="shortcut-row"><span>Submit search</span><span class="kbd">Enter</span></div>
+            <div class="shortcut-row"><span>New line in query</span><span class="kbd">Shift + Enter</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ PRIVACY MODAL ============ -->
+<div class="modal-overlay" id="privacyOverlay" aria-hidden="true">
+    <div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+        <div class="modal-head">
+            <h2 id="privacyTitle">Privacy &amp; data policy</h2>
+            <button class="icon-btn" id="privacyClose" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p style="margin-top:0;"><strong>RaiaSpace is built with privacy as a first principle.</strong></p>
+            <ul style="padding-left:20px;color:var(--text-soft);line-height:1.8;">
+                <li>No search queries are sent to RaiaSpace servers.</li>
+                <li>All searches go directly to your configured SearXNG instance.</li>
+                <li>Search history and settings are stored locally in your browser.</li>
+                <li>No cookies, no trackers, no analytics.</li>
+                <li>You can clear your local data at any time from Settings.</li>
+            </ul>
+            <p style="margin-bottom:0;">RaiaSpace is open source. Review the code and run it yourself.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ HOME VIEW ============ -->
+<main id="homeView">
+
+    <section class="hero">
+        <div class="hero-glow" aria-hidden="true"></div>
+        <div class="hero-inner wrap">
+            <h1>Search beyond the obvious.</h1>
+            <p class="lede">Explore the web with a faster, cleaner, more private search experience. Powered by your own SearXNG instance.</p>
+
+            <div class="search-shell">
+                <form id="searchForm" class="search-box glass" role="search" novalidate>
+                    <div class="search-main-row">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                        <textarea class="search-input" id="searchInput" placeholder="Search the web, ask a question, or paste a link…" rows="1" aria-label="Search query"></textarea>
+                        <div class="search-actions">
+                            <button type="button" class="icon-btn clear-btn" id="clearInputBtn" aria-label="Clear search">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                            </button>
+                            <button type="submit" class="submit-btn" id="submitBtn" aria-label="Search" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                             </button>
                         </div>
-                        <div class="validation-msg" id="validationMsg"></div>
-                    </form>
+                    </div>
+                    <div class="search-secondary-row">
+                        <button type="button" class="chip-btn" id="voiceBtn"><span>Voice</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+                        <button type="button" class="chip-btn" id="imageSearchBtn"><span>Image</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5-11 11"/></svg></button>
+                        <button type="button" class="chip-btn" id="fileUploadBtn"><span>File</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></button>
+                        <button type="button" class="chip-btn" id="cameraSearchBtn"><span>Camera</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8a2 2 0 0 1 2-2h1.5l1-1.5h7l1 1.5H18a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+                        <span class="spacer"></span>
+                        <button type="button" class="chip-btn" id="filtersToggleBtn" aria-expanded="false">
+                            <span>Filters</span>
+                            <span class="filter-count" id="filterCount" hidden>0</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                    </div>
+                    <div class="validation-msg" id="validationMsg"></div>
+                </form>
 
-                    <!-- Autocomplete -->
-                    <div class="autocomplete glass" id="autocomplete" role="listbox"></div>
+                <div class="autocomplete glass" id="autocomplete" role="listbox"></div>
 
-                    <!-- Filters panel -->
-                    <div class="filters-panel" id="filtersPanel">
-                        <div class="filters-inner glass">
-                            <div class="filters-grid">
-                                <div class="filter-field"><label for="fDate">Time</label><select class="select-field" id="fDate"><option value="Any time">Any time</option><option value="Past hour">Past hour</option><option value="Past day">Past day</option><option value="Past week">Past week</option><option value="Past month">Past month</option><option value="Past year">Past year</option></select></div>
-                                <div class="filter-field"><label for="fLang">Language</label><select class="select-field" id="fLang"><option value="Any language">Any language</option><option value="English">English</option><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="Spanish">Spanish</option><option value="Japanese">Japanese</option></select></div>
-                                <div class="filter-field"><label for="fRegion">Region</label><select class="select-field" id="fRegion"><option value="Any region">Any region</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="ID">Indonesia</option><option value="JP">Japan</option></select></div>
-                                <div class="filter-field"><label for="fSafe">Safe search</label><select class="select-field" id="fSafe"><option value="Moderate">Moderate</option><option value="Strict">Strict</option><option value="Off">Off</option></select></div>
-                                <div class="filter-field"><label for="fFileType">File type</label><select class="select-field" id="fFileType"><option value="Any type">Any type</option><option value="pdf">PDF</option><option value="docx">DOCX</option><option value="txt">TXT</option><option value="csv">CSV</option></select></div>
-                                <div class="filter-field"><label for="fDomain">Site</label><input type="text" class="select-field" id="fDomain" placeholder="example.org"></div>
-                                <div class="filter-field"><label for="fExclude">Exclude</label><input type="text" class="select-field" id="fExclude" placeholder="-term -site:example.com"></div>
-                                <div class="filter-field"><label for="fExact">Exact phrase</label><input type="text" class="select-field" id="fExact" placeholder="&quot;exact phrase&quot;"></div>
-                            </div>
-                            <div class="filters-actions">
-                                <button type="button" class="btn btn-ghost" id="resetFiltersBtn">Reset</button>
-                                <button type="button" class="btn btn-primary" id="applyFiltersBtn">Apply</button>
-                            </div>
+                <div class="filters-panel" id="filtersPanel">
+                    <div class="filters-inner glass">
+                        <div class="filters-grid">
+                            <div class="filter-field"><label for="fDate">Time</label><select class="select-field" id="fDate"><option value="Any time">Any time</option><option value="Past hour">Past hour</option><option value="Past day">Past day</option><option value="Past week">Past week</option><option value="Past month">Past month</option><option value="Past year">Past year</option></select></div>
+                            <div class="filter-field"><label for="fLang">Language</label><select class="select-field" id="fLang"><option value="Any language">Any language</option><option value="English">English</option><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="Spanish">Spanish</option><option value="Japanese">Japanese</option></select></div>
+                            <div class="filter-field"><label for="fRegion">Region</label><select class="select-field" id="fRegion"><option value="Any region">Any region</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="ID">Indonesia</option><option value="JP">Japan</option></select></div>
+                            <div class="filter-field"><label for="fSafe">Safe search</label><select class="select-field" id="fSafe"><option value="Moderate">Moderate</option><option value="Strict">Strict</option><option value="Off">Off</option></select></div>
+                            <div class="filter-field"><label for="fFileType">File type</label><select class="select-field" id="fFileType"><option value="Any type">Any type</option><option value="pdf">PDF</option><option value="docx">DOCX</option><option value="txt">TXT</option><option value="csv">CSV</option></select></div>
+                            <div class="filter-field"><label for="fDomain">Site</label><input type="text" class="select-field" id="fDomain" placeholder="example.org"></div>
+                            <div class="filter-field"><label for="fExclude">Exclude</label><input type="text" class="select-field" id="fExclude" placeholder="-term -site:example.com"></div>
+                            <div class="filter-field"><label for="fExact">Exact phrase</label><input type="text" class="select-field" id="fExact" placeholder="&quot;exact phrase&quot;"></div>
+                        </div>
+                        <div class="filters-actions">
+                            <button type="button" class="btn btn-ghost" id="resetFiltersBtn">Reset</button>
+                            <button type="button" class="btn btn-primary" id="applyFiltersBtn">Apply</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Search modes -->
-                <div class="modes-shell">
-                    <div class="modes-row" id="modesRow" role="tablist"></div>
-                    <div class="mode-desc" id="modeDesc">Search across the public web.</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Trending -->
-        <section class="section wrap">
-            <div class="section-head">
-                <h2>Trending now</h2>
-                <span class="section-note">Updated frequently</span>
-            </div>
-            <div class="trend-grid" id="trendGrid"></div>
-        </section>
-
-        <!-- Features -->
-        <section class="section wrap">
-            <div class="section-head">
-                <h2>Why RaiaSpace</h2>
-            </div>
-            <div class="feature-grid" id="featureGrid"></div>
-        </section>
-
-        <!-- Privacy band -->
-        <section class="section wrap">
-            <div class="privacy-band">
-                <div class="privacy-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg>
-                </div>
-                <div>
-                    <h2>Your search, your data</h2>
-                    <p>RaiaSpace doesn't track you. No cookies, no analytics, no third-party requests. All searches go directly to your chosen SearXNG instance. You stay in control.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="site-footer wrap">
-            <div class="footer-inner">
-                <div class="footer-left">© 2026 RaiaSpace</div>
-                <div class="footer-links">
-                    <a href="#" id="footerShortcuts">Shortcuts</a>
-                    <a href="#" id="openPrivacyDialogBtn">Privacy</a>
-                    <a href="#">Terms</a>
-                    <a href="#">Help</a>
-                    <a href="#">API</a>
-                    <a href="#">Status</a>
-                </div>
-                <div class="footer-right">
-                    <span>Built for focused discovery.</span>
-                </div>
-            </div>
-        </footer>
-
-    </main>
-
-    <!--  
-    RESULTS VIEW
-      -->
-    <div class="results-view" id="resultsView">
-        <div class="wrap">
-            <button type="button" class="back-home-btn" id="backHomeBtn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-                Back
-            </button>
-
-            <div class="results-summary">
-                <h1 id="resultsQueryText">Search</h1>
-                <span class="results-mode-tag" id="resultsModeTag">Web</span>
-                <div id="resultsFilterChips" style="display:inline-flex;gap:6px;flex-wrap:wrap;"></div>
             </div>
 
-            <div class="result-tabs" id="resultTabs" role="tablist"></div>
-
-            <div id="resultsContent"></div>
+            <div class="modes-shell">
+                <div class="modes-row" id="modesRow" role="tablist"></div>
+                <div class="mode-desc" id="modeDesc">Search across the public web.</div>
+            </div>
         </div>
+    </section>
+
+    <section class="section wrap">
+        <div class="section-head">
+            <h2>Trending searches</h2>
+            <span class="section-note">Curated topics</span>
+        </div>
+        <div class="trend-grid" id="trendGrid"></div>
+    </section>
+
+    <section class="section wrap">
+        <div class="section-head">
+            <h2>Why RaiaSpace</h2>
+        </div>
+        <div class="feature-grid" id="featureGrid"></div>
+    </section>
+
+    <section class="section wrap">
+        <div class="privacy-band">
+            <div class="privacy-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <div>
+                <h2>Your search, your data</h2>
+                <p>RaiaSpace doesn't track you. No cookies, no analytics, no third-party requests. All searches go directly to your chosen SearXNG instance. You stay in control.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer wrap">
+        <div class="footer-inner">
+            <div class="footer-left">© 2026 RaiaSpace · v0.1.4</div>
+            <div class="footer-links">
+                <a href="#" id="footerShortcuts">Shortcuts</a>
+                <a href="#" id="footerPrivacy">Privacy</a>
+                <a href="#" id="footerTerms">Terms</a>
+                <a href="#" id="footerHelp">Help</a>
+                <a href="https://buymeacoffee.com/hajirstudio" target="_blank" rel="noopener noreferrer" class="footer-donate">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+                    Support
+                </a>
+            </div>
+            <div class="footer-right">
+                <span>Built for focused discovery.</span>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<!-- ============ RESULTS VIEW ============ -->
+<div class="results-view" id="resultsView">
+    <div class="wrap">
+        <button type="button" class="back-home-btn" id="backHomeBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+            Back
+        </button>
+
+        <div class="results-summary">
+            <h1 id="resultsQueryText">Search</h1>
+            <span class="results-mode-tag" id="resultsModeTag">Web</span>
+            <div id="resultsFilterChips" style="display:inline-flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+
+        <div class="result-tabs" id="resultTabs" role="tablist"></div>
+
+        <div id="resultsContent"></div>
     </div>
+</div>
 
-    <!--  
-    TOAST STACK
-      -->
-    <div class="toast-stack" id="toastStack" role="status" aria-live="polite"></div>
+<!-- ============ FLOATING DONATE BUTTON ============ -->
+<a href="https://buymeacoffee.com/hajirstudio" target="_blank" rel="noopener noreferrer" class="donate-float hidden" id="donateFloat" aria-label="Support RaiaSpace">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/>
+    </svg>
+    <span>Support</span>
+    <button type="button" class="donate-float-close" id="donateFloatClose" aria-label="Dismiss">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+</a>
 
-    
+<!-- ============ TOASTS ============ -->
+<div class="toast-stack" id="toastStack" role="status" aria-live="polite"></div>
+
 <script src="script.js"></script>
 </body>
 </html>
