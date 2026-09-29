@@ -1,0 +1,29 @@
+# SearXNG settings for RaiaSpace
+use_default_settings: true
+
+general:
+  instance_name: "RaiaSpace"
+  debug: false
+
+server:
+  # Bind to all interfaces so Docker networking works
+  bind_address: "0.0.0.0"
+  port: 8080
+  # Overridden by the SEARXNG_SECRET env var in docker-compose.yml
+  secret_key: "REPLACE_ME"
+  # Disable the rate limiter for a private, single-user instance.
+  # Re-enable if you ever expose this SearXNG publicly.
+  limiter: false
+  image_proxy: true
+
+search:
+  # The critical line — enables /search?format=json
+  formats:
+    - html
+    - json
+  safe_search: 1
+  autocomplete: "duckduckgo"
+
+ui:
+  default_locale: "en"
+  query_in_title: false
