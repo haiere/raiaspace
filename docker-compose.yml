@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+  # ── SearXNG (search backend) ──────────────────────────────
+  searxng:
+    image: searxng/searxng:latest
+    container_name: raiaspace-searxng
+    restart: unless-stopped
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL}
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+    volumes:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
+    networks:
+      - raiaspace-net
+    # NOT exposed to the host — only reachable inside the Docker network
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # ── Redis / Valkey (SearXNG cache) ────────────────────────
+  redis:
+    image: docker.io/valkey/valkey:8-alpine
+    container_name: raiaspace-redis
+    restart: unless-stopped
+    command: valkey-server --save 30 1 --loglevel warning
+    volumes:
+      - valkey-data:/data
+    networks:
+      - raiaspace-net
+    expose:
+      - "6379"
+
+  # ── RaiaSpace Backend (Node.js/Express) ───────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: raiaspace-backend
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - SEARXNG_URL=http://searxng:8080
+      - FRONTEND_ORIGIN=${RAIASPACE_FRONTEND_URL}
+      - FETCH_TIMEOUT_MS=15000
+    depends_on:
+      searxng:
+        condition: service_healthy
+    networks:
+      - raiaspace-net
+    expose:
+      - "3000"
+
+  # ── RaiaSpace Frontend (static files) ─────────────────────
+  frontend:
+    image: nginx:alpine
+    container_name: raiaspace-frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    networks:
+      - raiaspace-net
+    expose:
+      - "80"
+
+  # ── Caddy (reverse proxy + automatic HTTPS) ───────────────
+  caddy:
+    image: caddy:2-alpine
+    container_name: raiaspace-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    environment:
+      - DOMAIN_SEARCH=${DOMAIN_SEARCH}
+      - DOMAIN_API=${DOMAIN_API}
+      - DOMAIN_FRONTEND=${DOMAIN_FRONTEND}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+    depends_on:
+      - searxng
+      - backend
+      - frontend
+    networks:
+      - raiaspace-net
+
+volumes:
+  valkey-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  raiaspace-net:
+    driver: bridge
