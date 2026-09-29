@@ -1,0 +1,49 @@
+# ── SearXNG public endpoint ──────────────────────────────────
+{$DOMAIN_SEARCH} {
+    tls {$LETSENCRYPT_EMAIL}
+    encode gzip
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Block access to the HTML UI if you only want the API — optional.
+    # Reverse-proxy everything to SearXNG.
+    reverse_proxy searxng:8080 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}
+
+# ── RaiaSpace Backend API ────────────────────────────────────
+{$DOMAIN_API} {
+    tls {$LETSENCRYPT_EMAIL}
+    encode gzip
+
+    header {
+        Access-Control-Allow-Origin "https://{$DOMAIN_FRONTEND}"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+
+    @options {
+        method OPTIONS
+    }
+    respond @options 204
+
+    reverse_proxy backend:3000
+}
+
+# ── RaiaSpace Frontend (static) ──────────────────────────────
+{$DOMAIN_FRONTEND} {
+    tls {$LETSENCRYPT_EMAIL}
+    encode gzip
+
+    root * /usr/share/nginx/html
+    file_server
+    try_files {path} /index.html
+}
