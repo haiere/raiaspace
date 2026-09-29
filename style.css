@@ -2046,6 +2046,17 @@ a { color: inherit; text-decoration: none; }
     .ai-answer-box { padding: 22px 26px; }
 }
 
+/* -------- HTTPS warning inline code -------- */
+.https-warn code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.30);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: var(--text-main);
+}
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: var(--radius-full); }

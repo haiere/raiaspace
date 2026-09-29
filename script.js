@@ -1,6 +1,6 @@
 /* ============================================================
    RaiaSpace Search v0.1.4 — Application Logic
-   Live SearXNG only. No demo mode.
+   Talks to a RaiaSpace backend, which proxies SearXNG.
    ============================================================ */
 (function () {
     "use strict";
@@ -46,7 +46,8 @@
     };
 
     /* ============ STATE ============ */
-    const DEFAULT_SEARXNG_URL = "https://searx.be";
+    // Same-origin by default. Override with a full URL if the API lives elsewhere.
+    const DEFAULT_API_BASE_URL = "/api";
     const State = {
         theme: Store.get("rs_theme", "system"),
         reducedMotion: Store.get("rs_reduced_motion", false),
@@ -57,8 +58,17 @@
         mode: "web",
         filters: {},
         activeFilterCount: 0,
-        searxngUrl: localStorage.getItem("raiaspace-searxng-url") || DEFAULT_SEARXNG_URL,
-        searxngStatus: "untested",
+        // Backward compat: migrate old searxng-url key to api-url
+        apiBaseUrl: localStorage.getItem("raiaspace-api-url")
+            || (function () {
+                const legacy = localStorage.getItem("raiaspace-searxng-url");
+                if (legacy) {
+                    localStorage.removeItem("raiaspace-searxng-url");
+                    localStorage.setItem("raiaspace-api-url", DEFAULT_API_BASE_URL);
+                }
+                return DEFAULT_API_BASE_URL;
+            })(),
+        apiStatus: "untested",
         currentPage: 1,
         lastQuery: "",
         imageFile: null,
@@ -116,16 +126,11 @@
         "renewable energy breakthroughs"
     ];
 
-    const CATEGORY_MAP = {
-        web: "general", ai: "general", images: "images", videos: "videos",
-        news: "news", academic: "science", maps: "general",
-        shopping: "general", social: "general", files: "general"
-    };
-
+    // Mode → backend query parameters. The backend handles the SearXNG category mapping.
     const LANGUAGE_CODE_MAP = { "English": "en", "Bahasa Indonesia": "id", "Spanish": "es", "Japanese": "ja", "Any language": "" };
     const SAFE_SEARCH_MAP = { "Moderate": "1", "Strict": "2", "Off": "0" };
     const TIME_RANGE_MAP = { "Any time": "", "Past hour": "day", "Past day": "day", "Past week": "week", "Past month": "month", "Past year": "year" };
-    const SEARXNG_TIMEOUT_MS = 15000;
+    const API_TIMEOUT_MS = 15000;
 
     const RESULT_TABS = ["All", "AI Overview", "Images", "Videos", "News", "Discussions"];
 
@@ -189,87 +194,75 @@
 
     function setTheme(t) { State.theme = t; Store.set("rs_theme", t); applyTheme(); }
 
-    /* ============ SEARXNG CLIENT ============ */
-    let searxngAbortController = null;
+    /* ============ BACKEND CLIENT ============ */
+    let searchAbortController = null;
 
-    function normalizeSearxngUrl(raw) {
-        if (!raw || !raw.trim()) return { valid: false, error: "Enter a valid HTTP or HTTPS SearXNG URL." };
+    // Accepts "/api", "api", "https://api.example.com", "https://api.example.com/"
+    // Returns a normalized base with no trailing slash.
+    function normalizeApiBaseUrl(raw) {
+        if (!raw || !raw.trim()) {
+            return { valid: false, error: "Enter a valid API base URL or a relative path like /api." };
+        }
+        const trimmed = raw.trim();
+        // Relative path
+        if (trimmed.startsWith("/") || (!trimmed.includes("://") && !trimmed.startsWith("http"))) {
+            let path = trimmed.replace(/\/+$/, "");
+            if (!path.startsWith("/")) path = "/" + path;
+            return { valid: true, url: path, error: null };
+        }
         try {
-            const parsed = new URL(raw.trim());
+            const parsed = new URL(trimmed);
             if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
                 return { valid: false, error: "Only HTTP and HTTPS URLs are supported." };
             }
-            let clean = parsed.origin + parsed.pathname.replace(/\/+$/, "").replace(/\/search$/, "");
+            let clean = parsed.origin + parsed.pathname.replace(/\/+$/, "");
             clean = clean.replace(/\/+$/, "");
             return { valid: true, url: clean, error: null };
         } catch (e) {
-            return { valid: false, error: "Enter a valid HTTP or HTTPS SearXNG URL." };
+            return { valid: false, error: "Enter a valid HTTP or HTTPS URL." };
         }
     }
 
-    function buildEffectiveQuery(query, filters) {
-        let q = query;
-        if (filters.fExact) q = '"' + filters.fExact.replace(/"/g, "") + '"';
-        if (filters.fDomain) q += " site:" + filters.fDomain.trim().replace(/^https?:\/\//, "");
-        if (filters.fExclude) {
-            filters.fExclude.split(/\s+/).filter(Boolean).forEach(t => {
-                q += " " + (t.startsWith("-") ? t : "-" + t);
-            });
-        }
-        if (filters.fFileType && filters.fFileType !== "Any type") {
-            q += " filetype:" + filters.fFileType;
-        }
-        return q.trim() || query;
-    }
-
-    function buildSearxngUrl(query, filters, mode, page) {
-        const base = normalizeSearxngUrl(State.searxngUrl || DEFAULT_SEARXNG_URL);
+    function buildBackendUrl(query, filters, mode, page) {
+        const base = normalizeApiBaseUrl(State.apiBaseUrl || DEFAULT_API_BASE_URL);
         if (!base.valid) return { valid: false, error: base.error };
-        const category = CATEGORY_MAP[mode] || "general";
-        const effectiveQuery = buildEffectiveQuery(query, filters || {});
+
         const params = new URLSearchParams({
-            q: effectiveQuery,
-            format: "json",
-            pageno: String(page || 1)
+            q: query,
+            mode,
+            page: String(page || 1)
         });
-        if (category) params.set("categories", category);
-        const lang = LANGUAGE_CODE_MAP[(filters || {}).fLang] || "";
+
+        const f = filters || {};
+        const lang = LANGUAGE_CODE_MAP[f.fLang] || "";
         if (lang) params.set("language", lang);
-        const tr = TIME_RANGE_MAP[(filters || {}).fDate] || "";
+
+        const tr = TIME_RANGE_MAP[f.fDate] || "";
         if (tr) params.set("time_range", tr);
-        const safe = SAFE_SEARCH_MAP[(filters || {}).fSafe];
+
+        const safe = SAFE_SEARCH_MAP[f.fSafe];
         if (safe !== undefined) params.set("safesearch", safe);
-        return { valid: true, requestUrl: base.url + "/search?" + params.toString(), category, effectiveQuery };
+
+        // The backend does not (yet) implement these advanced operators,
+        // but we pass them through so they can be added server-side later.
+        if (f.fFileType && f.fFileType !== "Any type") params.set("filetype", f.fFileType);
+        if (f.fDomain) params.set("site", f.fDomain.trim());
+        if (f.fExclude) params.set("exclude", f.fExclude.trim());
+        if (f.fExact) params.set("exact", f.fExact.trim());
+
+        return { valid: true, requestUrl: base.url + "/search?" + params.toString() };
     }
 
-    function classifySearxngError(error, response) {
-        if (response) {
-            if (response.status === 403) {
-                return { type: "json-disabled", message: "This SearXNG instance does not allow JSON output. Enable JSON in settings.yml." };
-            }
-            if (response.status === 429) {
-                return { type: "rate-limited", message: "The SearXNG instance temporarily limited this request. Try again later." };
-            }
-            if (!response.ok) {
-                return { type: "network", message: "RaiaSpace could not reach this SearXNG instance (HTTP " + response.status + ")." };
-            }
-        }
-        if (error && error.message && /NetworkError|Failed to fetch|TypeError/i.test(error.message)) {
-            return { type: "cors", message: "The SearXNG instance may be blocking browser requests (CORS). Configure CORS or use a same-origin deployment." };
-        }
-        return { type: "network", message: "RaiaSpace could not reach this SearXNG instance." };
-    }
-
-    async function searchWithSearXNG(query, filters, mode, page) {
-        if (searxngAbortController) searxngAbortController.abort();
+    async function searchWithBackend(query, filters, mode, page) {
+        if (searchAbortController) searchAbortController.abort();
         const controller = new AbortController();
-        searxngAbortController = controller;
+        searchAbortController = controller;
 
         let timedOut = false;
-        const timeoutId = setTimeout(() => { timedOut = true; controller.abort(); }, SEARXNG_TIMEOUT_MS);
+        const timeoutId = setTimeout(() => { timedOut = true; controller.abort(); }, API_TIMEOUT_MS);
         const t0 = performance.now();
 
-        const built = buildSearxngUrl(query, filters, mode, page);
+        const built = buildBackendUrl(query, filters, mode, page);
         if (!built.valid) { clearTimeout(timeoutId); return { ok: false, errorType: "invalid-url", message: built.error }; }
 
         let response;
@@ -282,67 +275,55 @@
         } catch (err) {
             clearTimeout(timeoutId);
             if (err && err.name === "AbortError") {
-                if (timedOut) return { ok: false, errorType: "timeout", message: "The search request took too long. Try again or use another instance." };
+                if (timedOut) return { ok: false, errorType: "timeout", message: "The search request took too long. Try again or check your backend." };
                 return { ok: false, errorType: "cancelled", message: "Search cancelled." };
             }
-            const c = classifySearxngError(err, null);
-            return { ok: false, errorType: c.type, message: c.message, technical: String(err) };
+            return {
+                ok: false,
+                errorType: "network",
+                message: "Could not reach the RaiaSpace backend. Check that it is running and reachable.",
+                technical: String(err)
+            };
         }
         clearTimeout(timeoutId);
         const elapsedMs = performance.now() - t0;
 
-        if (!response.ok) {
-            const c = classifySearxngError(null, response);
-            return { ok: false, errorType: c.type, message: c.message, technical: "HTTP " + response.status };
+        let payload = null;
+        try { payload = await response.json(); }
+        catch (e) { payload = null; }
+
+        if (!response.ok || !payload || payload.ok !== true) {
+            const message = (payload && payload.error) || ("Backend returned HTTP " + response.status + ".");
+            return { ok: false, errorType: "backend", message, technical: "HTTP " + response.status };
         }
-        const ct = response.headers.get("content-type") || "";
-        if (!ct.includes("application/json")) {
-            return { ok: false, errorType: "json-disabled", message: "This SearXNG instance did not return JSON. Enable JSON output in its settings.yml.", technical: "Content-Type: " + ct };
-        }
-        let data;
-        try { data = await response.json(); }
-        catch (err) { return { ok: false, errorType: "malformed", message: "Unreadable response from SearXNG.", technical: String(err) }; }
-        return { ok: true, data, category: built.category, elapsedMs };
+
+        return {
+            ok: true,
+            data: payload,
+            elapsedMs
+        };
     }
 
-    function mapSearxngResults(data, mode) {
-        if (!data || !Array.isArray(data.results)) return [];
-        return data.results.map((r, i) => {
-            let domain = "";
-            try { domain = new URL(r.url).hostname.replace(/^www\./, ""); }
-            catch (e) { domain = r.pretty_url || ""; }
-            return {
-                id: "sx-" + i,
-                title: r.title || domain || "Untitled result",
-                url: r.url || "",
-                domain,
-                snippet: r.content || "",
-                engine: r.engine || (r.engines && r.engines[0]) || "",
-                publishedDate: r.publishedDate || r.publishedAt || "",
-                thumbnail: r.thumbnail || r.img_src || "",
-                category: r.category || mode
-            };
-        });
-    }
-
-    function getSearxngSuggestions(data) {
-        if (!data || !Array.isArray(data.suggestions)) return [];
-        return data.suggestions.slice(0, 8);
-    }
-
-    async function checkSearxngConnection(url) {
-        const norm = normalizeSearxngUrl(url);
+    async function checkBackendConnection(baseUrl) {
+        const norm = normalizeApiBaseUrl(baseUrl);
         if (!norm.valid) return { status: "invalid", message: norm.error };
-        const prev = State.searxngUrl;
-        State.searxngUrl = norm.url;
-        const result = await searchWithSearXNG("connectivity test", {}, "web", 1);
-        State.searxngUrl = prev;
-        if (!result.ok) {
-            if (result.errorType === "cancelled") return { status: "network", message: "Connection test cancelled." };
-            const map = { "json-disabled": "json-unavailable", "cors": "cors", "timeout": "timeout", "invalid-url": "invalid", "rate-limited": "network", "malformed": "network", "network": "network" };
-            return { status: map[result.errorType] || "network", message: result.message };
+
+        const prev = State.apiBaseUrl;
+        State.apiBaseUrl = norm.url;
+        // Use a cheap query; the backend will hit SearXNG, which also validates the chain.
+        const result = await searchWithBackend("connectivity test", {}, "web", 1);
+        State.apiBaseUrl = prev;
+
+        if (result.ok) {
+            return { status: "ok", message: "Backend is reachable and returned valid JSON." };
         }
-        return { status: "ok", message: "SearXNG is reachable and returned valid JSON." };
+        if (result.errorType === "cancelled") {
+            return { status: "network", message: "Connection test cancelled." };
+        }
+        if (result.errorType === "timeout") {
+            return { status: "timeout", message: "Backend did not respond in time." };
+        }
+        return { status: "network", message: result.message };
     }
 
     /* ============ DRAWER / MODAL HELPERS ============ */
@@ -462,75 +443,73 @@
         toggleSaveHistory.addEventListener("change", e => { State.saveHistory = e.target.checked; Store.set("rs_save_history", State.saveHistory); });
     }
 
-    /* ============ SEARXNG SETTINGS UI ============ */
-    const searxngUrlInput = $("searxngUrlInput");
-    const searxngStatusPill = $("searxngStatusPill");
-    const searxngStatusText = $("searxngStatusText");
+    /* ============ BACKEND SETTINGS UI ============ */
+    const apiBaseUrlInput = $("apiBaseUrlInput");
+    const apiStatusPill = $("apiStatusPill");
+    const apiStatusText = $("apiStatusText");
     const httpsWarnBanner = $("httpsWarnBanner");
-    const dataModeBadge = $("dataModeBadge");
     const dataSourceSub = $("dataSourceSub");
 
-    if (searxngUrlInput) searxngUrlInput.value = State.searxngUrl;
-    if (dataModeBadge) dataModeBadge.classList.add("live");
+    if (apiBaseUrlInput) apiBaseUrlInput.value = State.apiBaseUrl;
 
     function setStatusPill(state, text) {
-        if (!searxngStatusPill || !searxngStatusText) return;
-        searxngStatusPill.className = "status-pill" + (state ? " " + state : "");
-        searxngStatusText.textContent = text;
+        if (!apiStatusPill || !apiStatusText) return;
+        apiStatusPill.className = "status-pill" + (state ? " " + state : "");
+        apiStatusText.textContent = text;
     }
+
     const STATUS_LABELS = {
         untested: { cls: "", text: "Not tested" },
         testing: { cls: "", text: "Testing…" },
-        ok: { cls: "ok", text: "SearXNG is reachable and returned valid JSON." },
-        "json-unavailable": { cls: "warn", text: "SearXNG responded but JSON output is disabled. Enable format: json in settings.yml." },
-        cors: { cls: "err", text: "The SearXNG instance may be blocking browser requests (CORS)." },
-        network: { cls: "err", text: "RaiaSpace could not reach this SearXNG instance." },
-        invalid: { cls: "err", text: "Enter a valid HTTP or HTTPS SearXNG URL." },
+        ok: { cls: "ok", text: "Backend is reachable and returned valid JSON." },
+        cors: { cls: "err", text: "The backend may be blocking browser requests (CORS)." },
+        network: { cls: "err", text: "RaiaSpace could not reach the backend." },
+        invalid: { cls: "err", text: "Enter a valid API base URL or a relative path like /api." },
         timeout: { cls: "err", text: "The request took too long." }
     };
 
     function checkHttpsMismatch() {
         if (!httpsWarnBanner) return;
         const pageHttps = location.protocol === "https:";
-        const urlHttp = State.searxngUrl && State.searxngUrl.startsWith("http://");
+        const urlHttp = State.apiBaseUrl && State.apiBaseUrl.startsWith("http://");
         httpsWarnBanner.hidden = !(pageHttps && urlHttp);
     }
 
-    function refreshSearxngUI() {
-        if (dataSourceSub) dataSourceSub.textContent = "Connected to " + State.searxngUrl;
+    function refreshBackendUI() {
+        if (dataSourceSub) dataSourceSub.textContent = "Queries are proxied through " + State.apiBaseUrl;
         checkHttpsMismatch();
     }
-    refreshSearxngUI();
+    refreshBackendUI();
 
-    const testSearxngBtn = $("testSearxngBtn");
-    if (testSearxngBtn) testSearxngBtn.addEventListener("click", async () => {
+    const testApiBtn = $("testApiBtn");
+    if (testApiBtn) testApiBtn.addEventListener("click", async () => {
         setStatusPill("", "Testing…");
-        const r = await checkSearxngConnection(searxngUrlInput.value);
-        State.searxngStatus = r.status;
+        const r = await checkBackendConnection(apiBaseUrlInput.value);
+        State.apiStatus = r.status;
         const label = STATUS_LABELS[r.status] || STATUS_LABELS.network;
         setStatusPill(label.cls, r.message || label.text);
     });
 
-    const saveSearxngBtn = $("saveSearxngBtn");
-    if (saveSearxngBtn) saveSearxngBtn.addEventListener("click", () => {
-        const norm = normalizeSearxngUrl(searxngUrlInput.value);
+    const saveApiBtn = $("saveApiBtn");
+    if (saveApiBtn) saveApiBtn.addEventListener("click", () => {
+        const norm = normalizeApiBaseUrl(apiBaseUrlInput.value);
         if (!norm.valid) { setStatusPill("err", norm.error); return; }
-        State.searxngUrl = norm.url;
-        localStorage.setItem("raiaspace-searxng-url", norm.url);
-        searxngUrlInput.value = norm.url;
-        State.searxngStatus = "untested";
-        refreshSearxngUI();
-        toast("SearXNG URL saved");
+        State.apiBaseUrl = norm.url;
+        localStorage.setItem("raiaspace-api-url", norm.url);
+        apiBaseUrlInput.value = norm.url;
+        State.apiStatus = "untested";
+        refreshBackendUI();
+        toast("API base URL saved");
     });
 
-    const resetSearxngBtn = $("resetSearxngBtn");
-    if (resetSearxngBtn) resetSearxngBtn.addEventListener("click", () => {
-        State.searxngUrl = DEFAULT_SEARXNG_URL;
-        localStorage.setItem("raiaspace-searxng-url", DEFAULT_SEARXNG_URL);
-        searxngUrlInput.value = DEFAULT_SEARXNG_URL;
-        State.searxngStatus = "untested";
+    const resetApiBtn = $("resetApiBtn");
+    if (resetApiBtn) resetApiBtn.addEventListener("click", () => {
+        State.apiBaseUrl = DEFAULT_API_BASE_URL;
+        localStorage.setItem("raiaspace-api-url", DEFAULT_API_BASE_URL);
+        apiBaseUrlInput.value = DEFAULT_API_BASE_URL;
+        State.apiStatus = "untested";
         setStatusPill("", "Not tested");
-        refreshSearxngUI();
+        refreshBackendUI();
         toast("Reset to default");
     });
 
@@ -1058,21 +1037,24 @@
     }
 
     async function renderLiveResults(query, page) {
-        const result = await searchWithSearXNG(query, State.filters, State.mode, page);
+        const result = await searchWithBackend(query, State.filters, State.mode, page);
 
         if (!result.ok) {
-            // A newer search has superseded this one — silently ignore
             if (result.errorType === "cancelled") return;
             resultsContent.innerHTML = errorScreenHTML(result.errorType, result.message, result.technical);
             wireResultActions();
             return;
         }
 
-        const data = result.data;
-        const normalized = mapSearxngResults(data, State.mode);
-        const suggestions = getSearxngSuggestions(data);
+        const payload = result.data;
+        const normalized = payload.results || [];
+        const suggestions = payload.suggestions || [];
+
         let html = poweredByBadge();
-        html += metaStripHTML(typeof data.number_of_results === "number" ? data.number_of_results : normalized.length, result.elapsedMs);
+        html += metaStripHTML(
+            typeof payload.number_of_results === "number" ? payload.number_of_results : normalized.length,
+            result.elapsedMs
+        );
 
         if (!normalized.length) {
             html += emptyStateHTML();
@@ -1090,7 +1072,7 @@
         } else if (State.mode === "videos") {
             html += videoGridHTML(normalized);
         } else {
-            html += normalized.map(r => resultCardHTML({ title: r.title, domain: r.domain, url: r.url, snippet: r.snippet, meta: r.publishedDate, engine: r.engine }, query)).join("");
+            html += normalized.map(r => resultCardHTML(r, query)).join("");
         }
 
         html += relatedSearchesHTML(suggestions);
@@ -1103,7 +1085,6 @@
 
     function sourceBasedPreviewHTML(query, results) {
         const topSnippets = results.slice(0, 4).map(r => r.snippet).filter(Boolean);
-        // Lookbehind-free sentence split for Safari compatibility
         const summary = topSnippets.length
             ? topSnippets.join(" ").replace(/([.!?])\s+/g, "$1|").split("|").slice(0, 4).join(" ")
             : "No extractable snippet content was available for this query.";
@@ -1605,14 +1586,14 @@
     renderHistory();
     applyTheme();
 
-    // Auto-test connection on first load
-    if (State.searxngStatus === "untested") {
-        checkSearxngConnection(State.searxngUrl).then(r => {
-            State.searxngStatus = r.status;
+    // Auto-test backend connection on first load
+    if (State.apiStatus === "untested") {
+        checkBackendConnection(State.apiBaseUrl).then(r => {
+            State.apiStatus = r.status;
             const label = STATUS_LABELS[r.status] || STATUS_LABELS.network;
             setStatusPill(label.cls, r.message || label.text);
         });
     }
 
-    console.log("%cRaiaSpace v0.1.4", "color:#3b82f6;font-weight:800;font-size:14px", "— live SearXNG only");
+    console.log("%cRaiaSpace v0.1.4", "color:#3b82f6;font-weight:800;font-size:14px", "— backend-proxied SearXNG");
 })();

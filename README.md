@@ -1,24 +1,25 @@
 # RaiaSpace
 
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-active-success.svg)](#)
-[![Application](https://img.shields.io/badge/app-static%20SPA-blue.svg)](#overview)
-[![Backend](https://img.shields.io/badge/backend-SearXNG-orange.svg)](#searxng-requirements)
-[![Privacy](https://img.shields.io/badge/privacy-local--first-purple.svg)](#privacy)
-[![Version](https://img.shields.io/badge/version-0.1.4-blue.svg)](#version-history)
-
-> A private, minimal, and fast search interface powered by your own SearXNG instance.
-
-**RaiaSpace** is a static, client-side search frontend for web, images, video, news, and other search categories supported by SearXNG.
-
-It does **not** generate placeholder or fake results. Every query is sent directly from your browser to the SearXNG instance you configure. If the instance is unavailable, misconfigured, or unable to return JSON, RaiaSpace shows a clear, actionable error — not fabricated data.
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT License" />
+  <img src="https://img.shields.io/badge/status-active-success.svg" alt="Active Status" />
+  <img src="https://img.shields.io/badge/app-static%20SPA-blue.svg" alt="Static SPA" />
+  <img src="https://img.shields.io/badge/backend-Node.js%20%2B%20SearXNG-orange.svg" alt="Node.js + SearXNG Backend" />
+  <img src="https://img.shields.io/badge/deploy-Docker%20Compose-2496ED.svg" alt="Docker Compose Deployment" />
+  <img src="https://img.shields.io/badge/privacy-self--hosted-purple.svg" alt="Self-hosted Privacy" />
+  <img src="https://img.shields.io/badge/version-0.1.4-blue.svg" alt="Version 0.1.4" />
+</p>
 
 <p align="center">
-  <a href="#getting-started">
-    <img src="https://img.shields.io/badge/Get%20Started-Configure%20SearXNG-3B82F6?style=for-the-badge" alt="Get started with RaiaSpace" />
+  A private, minimal, and fast search interface powered by your own SearXNG instance, proxied through a tiny self-hosted backend.
+</p>
+
+<p align="center">
+  <a href="#deployment">
+    <img src="https://img.shields.io/badge/Get%20Started-Docker%20Compose-3B82F6?style=for-the-badge" alt="Get started with RaiaSpace" />
   </a>
   <a href="#privacy">
-    <img src="https://img.shields.io/badge/Privacy-Run%20Your%20Own%20Backend-7C3AED?style=for-the-badge" alt="Privacy information" />
+    <img src="https://img.shields.io/badge/Privacy-Self--Hosted-7C3AED?style=for-the-badge" alt="Privacy information" />
   </a>
 </p>
 
@@ -27,10 +28,13 @@ It does **not** generate placeholder or fake results. Every query is sent direct
 ## Table of Contents
 
 - [Overview](#overview)
+- [Architecture](#architecture)
 - [Features](#features)
 - [Requirements](#requirements)
-- [SearXNG Requirements](#searxng-requirements)
+- [Backend API](#backend-api)
+- [SearXNG Configuration](#searxng-configuration)
 - [Getting Started](#getting-started)
+- [Deployment](#deployment)
 - [Configuration](#configuration)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Project Structure](#project-structure)
@@ -48,328 +52,469 @@ It does **not** generate placeholder or fake results. Every query is sent direct
 
 ## Overview
 
-RaiaSpace is a single-page application built with plain HTML, CSS, and JavaScript.
+RaiaSpace is a static, client-side search frontend built with plain HTML, CSS, and JavaScript, paired with a small Node.js/Express backend.
 
-It requires **no**:
+The frontend has no build step, no database, and no framework dependency. The backend forwards search queries to your self-hosted SearXNG instance and returns normalized JSON that the frontend can display reliably.
 
-- Frontend build step or framework.
-- Database.
-- RaiaSpace server.
-- Backend application server.
+Search flow:
 
-The frontend connects directly to a **SearXNG instance** selected by you.
+```text
+Browser → RaiaSpace Backend → SearXNG → Upstream Search Engines
+```
 
-RaiaSpace is designed for:
+If any part of that chain fails, RaiaSpace shows a clear error instead of fake or placeholder results.
 
-- Developers who want a customizable search interface.
-- Privacy-conscious users who prefer self-hosted search infrastructure.
-- SearXNG administrators who need a lightweight frontend.
-- Users who want a responsive search experience without a hosted search account.
+### Why a backend?
 
-### No Demo or Fake Results
+RaiaSpace used to talk to SearXNG directly from the browser, but that approach is fragile:
 
-RaiaSpace does **not** include:
+- SearXNG JSON output is disabled by default.
+- Browser-to-SearXNG requests can run into CORS issues.
+- HTTPS pages cannot call HTTP endpoints because of mixed-content blocking.
 
-- Fake search results.
-- Placeholder content.
-- A “demo mode” that simulates a working backend.
+The backend solves all of that by calling SearXNG server-side, normalizing the response, and keeping the frontend simple.
 
-If SearXNG is not configured or reachable:
+### Local data
 
-- No placeholder results are shown.
-- The failed request is reported to the user.
-- The interface provides troubleshooting guidance where possible.
-
-### Local Data
-
-The following data is stored **locally in your browser** when enabled:
+When enabled, RaiaSpace stores the following data locally in your browser:
 
 - Search history.
 - Bookmarks.
 - Theme preference.
 - Accessibility preferences.
 - Search filters.
-- SearXNG instance URL.
+- Backend API base URL.
 
-This data is **not** sent to any RaiaSpace server — because RaiaSpace does not operate a server-side storage service.
+This data stays on your device and is not sent to any RaiaSpace-operated server.
+
+---
+
+## Architecture
+
+```text
+┌──────────────────────┐
+│   Browser (SPA)      │
+│   index.html         │
+│   style.css          │
+│   script.js          │
+└──────────┬───────────┘
+           │  GET /api/search?q=...
+           ▼
+┌──────────────────────┐
+│  RaiaSpace Backend   │
+│  backend/server.js   │
+│  Node.js / Express   │
+└──────────┬───────────┘
+           │  GET /search?format=json
+           ▼
+┌──────────────────────┐
+│      SearXNG         │
+│   searxng:8080       │
+└──────────┬───────────┘
+           ▼
+   Upstream search engines
+```
+
+In the reference deployment, Caddy terminates TLS on ports 80 and 443, serves the static frontend, and forwards `/api/*` to the backend. All services run together in one `docker-compose.yml`.
 
 ---
 
 ## Features
 
-- **Multi-mode search** — Web, AI Answer, Images, Videos, News, Maps, Shopping, Academic, Social, and Files (depending on your SearXNG configuration).
-- **Live SearXNG integration** — Real requests to a SearXNG JSON API.
-- **No mock data** — No fabricated results when the backend fails.
-- **Text search** — Standard text queries.
-- **Voice input** — Optional speech recognition via the Web Speech API (where supported).
-- **Image input** — Select or upload an image when the workflow supports it.
-- **File input** — Select a local file for supported search workflows.
-- **Camera input** — Capture an image on devices/browsers that expose camera access.
-- **Advanced filters** — Language, region, time range, safe search, file type, domain, exclusion terms (where supported).
-- **Search history** — Up to 50 recent queries stored locally.
-- **Bookmarks** — Save individual result links locally.
-- **Theme support** — Light, dark, and system-preference modes.
-- **Reduced motion** — Respects the browser’s reduced-motion preference.
-- **Keyboard shortcuts** — Navigate and control the interface without relying only on pointer input.
-- **Responsive layout** — Works across mobile, tablet, and desktop.
-- **CORS awareness** — Explains common cross-origin request failures.
-- **HTTPS awareness** — Detects likely mixed-content configuration problems.
-- **No required telemetry** — No analytics, tracking, or RaiaSpace backend needed.
+- Multi-mode search: Web, AI Answer, Images, Videos, News, Maps, Shopping, Academic, Social, and Files.
+- Backend-proxied SearXNG, so there are no CORS or mixed-content issues.
+- No fake results or demo mode.
+- Text search.
+- Voice input via the Web Speech API, where supported.
+- Image input from upload or selection.
+- File input for filename or topic-based search.
+- Camera input on supported devices and browsers.
+- Advanced filters: language, region, time range, safe search, file type, domain, and exclusions.
+- Search history stored locally, up to 50 entries.
+- Local bookmarks for result links.
+- Light, dark, and system theme modes.
+- Reduced-motion support.
+- Keyboard shortcuts.
+- Responsive layout for mobile, tablet, and desktop.
+- Early failure detection through backend startup checks.
+- Docker-ready deployment with automatic HTTPS.
 
-Some features depend on your SearXNG configuration, enabled engines, permissions, and capabilities.
+Some features depend on browser support, SearXNG configuration, enabled engines, and device permissions.
 
 ---
 
 ## Requirements
 
-RaiaSpace requires:
+### Production
 
-- A modern web browser.
-- JavaScript enabled.
-- A running SearXNG instance.
-- JSON output enabled on the SearXNG instance.
-- CORS configured for the origin where RaiaSpace is served.
-- HTTPS-compatible deployment when the frontend is served over HTTPS.
+- Docker Engine and Docker Compose.
+- A public domain pointing to your server.
+- Ports 80 and 443 open to the internet.
 
-The frontend itself requires **no**:
+### Development
 
-- Database.
-- Backend application server.
-- Node.js runtime in production.
-- Build tool.
-- Package installation.
-- RaiaSpace account.
+- Node.js 20+ for the backend.
+- A reachable SearXNG instance.
+- Any static file server for the frontend, such as `python3 -m http.server` or `npx serve`.
+
+### SearXNG
+
+- JSON output enabled in `settings.yml`.
+- SearXNG reachable from the backend, ideally through the Docker network.
+
+The frontend itself does not require a database, user account, build step, or package installation.
 
 ---
 
-## SearXNG Requirements
+## Backend API
 
-RaiaSpace communicates with SearXNG through its search API.
+The backend exposes one search endpoint and one health endpoint.
 
-SearXNG supports search requests through the `/` and `/search` endpoints. JSON output must be enabled in the instance configuration and requested through the appropriate format parameter. [web:67]
+### `GET /api/search`
 
-### Enable JSON Output
+Proxies a query to SearXNG and returns normalized results.
 
-In your SearXNG `settings.yml`, ensure JSON is included in the search formats:
+| Param | Required | Default | Description |
+| --- | --- | --- | --- |
+| `q` | Yes | — | Search query |
+| `mode` | No | `web` | `web`, `ai`, `images`, `videos`, `news`, `academic`, `maps`, `shopping`, `social`, `files` |
+| `page` | No | `1` | Result page |
+| `language` | No | — | Language code |
+| `time_range` | No | — | `day`, `week`, `month`, `year` |
+| `safesearch` | No | — | `0` off, `1` moderate, `2` strict |
+| `categories` | No | — | Override SearXNG category |
+| `filetype` | No | — | `pdf`, `docx`, `txt`, `csv` |
+| `site` | No | — | Restrict results to one domain |
+| `exclude` | No | — | Space-separated excluded terms |
+| `exact` | No | — | Exact-phrase constraint |
+
+Success response:
+
+```json
+{
+  "ok": true,
+  "query": "example",
+  "mode": "web",
+  "page": 1,
+  "number_of_results": 42,
+  "results": [
+    {
+      "title": "Example result",
+      "url": "[https://example.org/article](https://example.org/article)",
+      "snippet": "Short description …",
+      "domain": "example.org",
+      "engine": "google",
+      "publishedDate": "",
+      "thumbnail": ""
+    }
+  ],
+  "suggestions": []
+}
+```
+
+Error response:
+
+```json
+{ "ok": false, "error": "Human-readable explanation." }
+```
+
+Status codes:
+
+| Code | Meaning |
+| --- | --- |
+| `200` | Success |
+| `400` | Missing or invalid `q` |
+| `429` | SearXNG rate-limited the request |
+| `502` | Backend could not reach SearXNG, or JSON is disabled |
+| `504` | Backend timed out waiting for SearXNG |
+
+### `GET /health`
+
+```json
+{ "status": "ok" }
+```
+
+Used by Docker health checks and the frontend connection test.
+
+---
+
+## SearXNG Configuration
+
+RaiaSpace uses SearXNG’s JSON API. JSON output must be enabled in `settings.yml`.
+
+### Enable JSON output
 
 ```yaml
+use_default_settings: true
+
+general:
+  instance_name: "RaiaSpace"
+
+server:
+  bind_address: "0.0.0.0"
+  port: 8080
+  secret_key: "REPLACE_ME"
+  limiter: false
+  image_proxy: true
+
 search:
   formats:
     - html
     - json
+  safe_search: 1
+  autocomplete: "duckduckgo"
+
+ui:
+  default_locale: "en"
 ```
 
-Exact formatting and surrounding configuration may differ by SearXNG version and deployment.
+Restart SearXNG after editing the file:
 
-If JSON output is not enabled, requests that ask for JSON may fail or return a `403 Forbidden` response. [web:67]
+```bash
+docker compose restart searxng
+```
 
-### API Request Parameters
+Verify JSON output:
 
-A typical SearXNG JSON request looks like:
+```bash
+docker compose exec backend \
+  wget -qO- 'http://searxng:8080/search?q=test&format=json' | head -c 200
+```
+
+You should see JSON output starting with `{"query":"test", ...}`.
+
+### Request example
 
 ```text
-[https://searx.example.com/search?q=example&format=json](https://searx.example.com/search?q=example&format=json)
+http://searxng:8080/search?q=example&format=json&categories=general
 ```
 
-Common parameters include:
+Common parameters:
 
-| Parameter     | Description                                      |
-|---------------|--------------------------------------------------|
-| `q`           | Search query                                     |
-| `format`      | Output format, such as `json`                    |
-| `categories`  | Search categories                                |
-| `language`    | Result language                                  |
-| `pageno`      | Result page number                               |
-| `time_range`  | Time filter such as `day`, `month`, or `year`    |
-| `safesearch`  | Safe-search level                                |
+| Parameter | Description |
+| --- | --- |
+| `q` | Search query |
+| `format` | Output format, must be `json` |
+| `categories` | Search category such as `general` or `images` |
+| `language` | Result language |
+| `pageno` | Page number |
+| `time_range` | Time filter |
+| `safesearch` | Safe-search level |
 
-Available behavior depends on your SearXNG configuration and enabled engines. [web:67]
+### CORS and HTTPS
 
-### Configure CORS
-
-Your SearXNG server or reverse proxy must allow browser requests from the origin hosting RaiaSpace.
-
-A permissive example:
-
-```http
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: GET, OPTIONS
-Access-Control-Allow-Headers: Content-Type, Accept
-Access-Control-Max-Age: 86400
-```
-
-For a private instance, prefer restricting to the exact RaiaSpace origin instead of using `*`:
-
-```http
-Access-Control-Allow-Origin: [https://hajir.is-a.dev/raiaspace](https://hajir.is-a.dev/raiaspace)
-```
-
-Do **not** include a trailing slash in the origin value.
-
-### Nginx Example
-
-Add inside the relevant `location` block:
-
-```nginx
-add_header Access-Control-Allow-Origin "[https://hajir.is-a.dev/raiaspace](https://hajir.is-a.dev/raiaspace)" always;
-add_header Access-Control-Allow-Methods "GET, OPTIONS" always;
-add_header Access-Control-Allow-Headers "Content-Type, Accept" always;
-
-if ($request_method = OPTIONS) {
-    return 204;
-}
-```
-
-For local development, you may temporarily use:
-
-```nginx
-add_header Access-Control-Allow-Origin "http://localhost:8080" always;
-```
-
-### Caddy Example
-
-```caddy
-header {
-    Access-Control-Allow-Origin "[https://hajir.is-a.dev/raiaspace](https://hajir.is-a.dev/raiaspace)"
-    Access-Control-Allow-Methods "GET, OPTIONS"
-    Access-Control-Allow-Headers "Content-Type, Accept"
-}
-```
-
-### CORS Security Note
-
-Using:
-
-```http
-Access-Control-Allow-Origin: *
-```
-
-allows any website to issue browser requests to your SearXNG instance.
-
-This may be acceptable for a deliberately public search service, but a private or rate-limited instance should restrict the allowed origin and apply appropriate authentication or network controls.
-
-### HTTPS and Mixed Content
-
-If RaiaSpace is served over HTTPS, the configured SearXNG URL should also use HTTPS.
-
-Browsers may block requests from a secure HTTPS page to an insecure HTTP resource as mixed content. Mixed content can expose or modify data in transit, so serving all resources over HTTPS is recommended. [web:74]
+Because the frontend never calls SearXNG directly, CORS is not required for RaiaSpace. The backend talks to SearXNG over the internal Docker network using plain HTTP, which keeps the service private and simple.
 
 ---
 
 ## Getting Started
 
-### 1. Get the Files
-
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone [https://github.com/Haiere/raiaspace.git](https://github.com/Haiere/raiaspace.git)
 cd raiaspace
 ```
 
-Or download manually:
-
-```text
-index.html
-script.js
-style.css
-```
-
-Place all files in the same directory.
-
-### 2. Serve the Application
-
-Because RaiaSpace uses `fetch`, browser storage, and cross-origin requests, serve it through HTTP or HTTPS.
-
-Opening `index.html` with `file://` may work for basic layout testing but is not recommended for SearXNG integration.
-
-#### Python
+### 2. Start SearXNG locally
 
 ```bash
-python3 -m http.server 8080
+docker run -d --name searxng -p 8080:8080 \
+  -v "$PWD/searxng/settings.yml:/etc/searxng/settings.yml:ro" \
+  -e SEARXNG_BASE_URL=http://localhost:8080/ \
+  searxng/searxng:latest
 ```
 
-#### Node.js
+Verify JSON output:
 
 ```bash
-npx serve .
+curl -s 'http://localhost:8080/search?q=test&format=json' | head -c 200
 ```
 
-#### PHP
+### 3. Run the backend
 
 ```bash
-php -S localhost:8080
+cd backend
+npm install
+SEARXNG_URL=http://localhost:8080 \
+FRONTEND_ORIGIN=http://localhost:5500 \
+PORT=3000 \
+npm start
 ```
 
-Then open:
+### 4. Serve the frontend
 
-```text
-http://localhost:8080
+```bash
+python3 -m http.server 5500
 ```
 
-### 3. Configure SearXNG
+Open `http://localhost:5500`.
+
+### 5. Point the frontend to the backend
 
 1. Open RaiaSpace.
-2. Click the **Settings** button.
-3. Enter the base URL of your SearXNG instance.
-4. Save the URL.
-5. Click **Test**.
-6. Confirm that the instance is reachable and returns valid JSON.
-7. Enter a search query and press **Enter**.
+2. Go to Settings.
+3. Set the backend API base URL to `http://localhost:3000`.
+4. Save and test.
+5. Run a search.
 
-Example SearXNG URL:
+For a production-style local setup, keep the backend URL as `/api`.
 
-```text
-[https://searx.example.com](https://searx.example.com)
+---
+
+## Deployment
+
+The reference deployment uses Docker Compose with Caddy for automatic HTTPS.
+
+### Prerequisites
+
+- Server with a public IP.
+- Docker Engine 24+ and Docker Compose v2.
+- Domain names pointing to your server.
+- Ports 80 and 443 open in the firewall.
+
+### Example domains
+
+| Subdomain | Purpose |
+| --- | --- |
+| `yourdomain.com` | Frontend |
+| `api.yourdomain.com` | Backend API, optional if same-origin |
+| `search.yourdomain.com` | SearXNG, if exposed separately |
+
+### 1. Prepare `.env`
+
+```bash
+cp .env.example .env
+nano .env
 ```
 
-Do **not** include `/search` unless the application explicitly requests that path as part of its configuration.
+Example values:
+
+```env
+SEARXNG_SECRET=$(openssl rand -hex 32)
+SEARXNG_BASE_URL=[https://search.yourdomain.com/](https://search.yourdomain.com/)
+RAIASPACE_BACKEND_URL=[https://api.yourdomain.com](https://api.yourdomain.com)
+RAIASPACE_FRONTEND_URL=[https://yourdomain.com](https://yourdomain.com)
+RAIASPACE_SEARXNG_URL=http://searxng:8080
+
+DOMAIN_SEARCH=search.yourdomain.com
+DOMAIN_API=api.yourdomain.com
+DOMAIN_FRONTEND=yourdomain.com
+LETSENCRYPT_EMAIL=you@yourdomain.com
+```
+
+`RAIASPACE_SEARXNG_URL` must use the internal Docker hostname `searxng`, not `localhost`.
+
+### 2. Start the stack
+
+```bash
+docker compose up -d --build
+```
+
+The first run pulls images, builds the backend, and issues TLS certificates.
+
+### 3. Verify each layer
+
+SearXNG:
+
+```bash
+docker compose exec backend wget -qO- 'http://searxng:8080/search?q=test&format=json' | head -c 200
+```
+
+Backend:
+
+```bash
+curl -s '[https://api.yourdomain.com/health](https://api.yourdomain.com/health)'
+curl -s '[https://api.yourdomain.com/api/search?q=test&mode=web](https://api.yourdomain.com/api/search?q=test&mode=web)' | jq .ok
+```
+
+Frontend:
+
+Open `https://yourdomain.com` and run a search. In DevTools → Network, confirm the request goes to `/api/search` and returns `200`.
+
+### 4. Inspect logs
+
+```bash
+docker compose logs -f searxng
+docker compose logs -f backend
+docker compose logs -f caddy
+docker compose ps
+```
+
+### 5. Open firewall
+
+```bash
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw enable
+```
+
+### Updating
+
+```bash
+git pull
+docker compose up -d --build
+docker compose restart searxng
+```
 
 ---
 
 ## Configuration
 
-Configuration is managed through the **Settings** interface and persisted locally in the browser.
+### Frontend
 
-| Setting or Key            | Description                                                  |
-|---------------------------|--------------------------------------------------------------|
-| `rs_theme`                | Theme preference: `light`, `dark`, or `system`               |
-| `rs_reduced_motion`       | Minimize or disable non-essential animations                 |
-| `rs_safe_search`          | Safe-search preference (where supported)                     |
-| `rs_suggestions`          | Enable or disable autocomplete suggestions                   |
-| `rs_save_history`         | Store recent searches locally                                |
-| `rs_language`             | Preferred search-result language                             |
-| `rs_region`               | Preferred search region                                      |
-| `raiaspace-searxng-url`   | Configured SearXNG base URL                                  |
-| `rs_bookmarks`            | Locally saved result links                                   |
-| `rs_history`              | Up to 50 locally saved search queries                        |
+Settings are stored in `localStorage`.
 
-### Reset Local Data
+| Key | Description |
+| --- | --- |
+| `rs_theme` | Light, dark, or system |
+| `rs_reduced_motion` | Minimize non-essential animations |
+| `rs_safe_search` | Safe-search preference |
+| `rs_suggestions` | Enable autocomplete suggestions |
+| `rs_save_history` | Store recent searches locally |
+| `rs_language` | Preferred result language |
+| `rs_region` | Preferred region |
+| `raiaspace-api-url` | Backend API base URL, default `/api` |
+| `rs_bookmarks` | Locally saved result links |
+| `rs_history` | Up to 50 saved queries |
 
-Use the relevant Settings controls to:
+Upgrading from `v0.1.3` or earlier: the old `raiaspace-searxng-url` key is migrated automatically and now stores the backend URL.
 
-- Clear all search history.
+### Backend
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PORT` | `3000` | Listen port |
+| `SEARXNG_URL` | `http://searxng:8080` | Base URL of SearXNG |
+| `FRONTEND_ORIGIN` | `http://localhost:3000` | Allowed CORS origin |
+| `FETCH_TIMEOUT_MS` | `15000` | Upstream timeout in milliseconds |
+
+### Reset local data
+
+Use Settings to:
+
+- Clear search history.
 - Remove bookmarks.
-- Reset the SearXNG URL.
+- Reset the backend URL.
 - Restore default preferences.
 
-You can also clear RaiaSpace site data through your browser’s privacy or storage settings.
+You can also clear site data through your browser settings.
 
 ---
 
 ## Keyboard Shortcuts
 
-| Action                        | Shortcut                  |
-|-------------------------------|---------------------------|
-| Focus search box              | `⌘K` / `Ctrl+K`           |
-| Open shortcuts panel          | `⌘/` / `Ctrl+/`           |
-| Submit search                 | `Enter`                   |
-| Insert a new line in the query| `Shift+Enter`             |
-| Close modal or drawer         | `Esc`                     |
-| Navigate autocomplete         | `Arrow Up` / `Arrow Down` |
-| Navigate mode tabs            | `Arrow Left` / `Arrow Right` |
+| Action | Shortcut |
+| --- | --- |
+| Focus search box | `⌘K` / `Ctrl+K` |
+| Open shortcuts panel | `⌘/` / `Ctrl+/` |
+| Submit search | `Enter` |
+| Insert a new line | `Shift+Enter` |
+| Close modal or drawer | `Esc` |
+| Navigate autocomplete | `Arrow Up` / `Arrow Down` |
+| Navigate mode tabs | `Arrow Left` / `Arrow Right` |
 
-Shortcuts may be ignored while focus is inside a text input, select element, or another control where the keystroke has a native meaning.
+Shortcuts are disabled while focus is inside a text input, select, or another control with native keyboard behavior.
 
 ---
 
@@ -377,249 +522,215 @@ Shortcuts may be ignored while focus is inside a text input, select element, or 
 
 ```text
 raiaspace/
-├── index.html    # Markup, dialogs, drawers, and static layout
-├── script.js     # Application state, SearXNG client, and UI logic
-├── style.css     # Design tokens, layout, themes, and components
-├── README.md     # Project documentation
-└── LICENSE       # MIT license
+├── docker-compose.yml
+├── Caddyfile
+├── .env
+├── .env.example
+├── .gitignore
+├── LICENSE
+├── README.md
+├── index.html
+├── style.css
+├── script.js
+├── backend/
+│   ├── server.js
+│   ├── package.json
+│   └── Dockerfile
+└── searxng/
+    └── settings.yml
 ```
 
-RaiaSpace intentionally avoids build tooling and runtime dependencies.
+RaiaSpace intentionally avoids frontend build tooling and runtime dependencies.
 
 ---
 
 ## Troubleshooting
 
-### “This SearXNG Instance Did Not Return JSON”
+### Backend not reachable
 
-The instance may not have JSON output enabled.
-
-Check your SearXNG configuration:
-
-```yaml
-search:
-  formats:
-    - html
-    - json
-```
-
-Restart or reload SearXNG after changing the configuration, then test the connection again.
-
-### “The SearXNG Instance May Be Blocking Browser Requests”
-
-The browser likely blocked the request because the SearXNG server did not return suitable CORS headers.
+The frontend cannot reach `/api/search`.
 
 Check:
 
-- `Access-Control-Allow-Origin`
-- `Access-Control-Allow-Methods`
-- `Access-Control-Allow-Headers`
-- OPTIONS request handling
-- The exact origin serving RaiaSpace
-- Browser developer-console errors
-
-Alternatively, serve RaiaSpace from the same origin as SearXNG, for example:
-
-```text
-[https://searx.example.com/raiaspace/](https://searx.example.com/raiaspace/)
+```bash
+docker compose ps
+docker compose logs backend
+curl [https://yourdomain.com/api/health](https://yourdomain.com/api/health)
 ```
 
-Same-origin deployment can avoid cross-origin browser restrictions, but it requires server configuration.
+Common causes:
 
-### “The Search Request Took Too Long”
+- Backend container is not running.
+- Reverse proxy is not forwarding `/api/*`.
+- Backend URL is misconfigured.
+- TLS certificate has not been issued yet.
+
+### SearXNG returned 403
+
+JSON output is not enabled.
+
+Fix:
+
+1. Make sure `json` exists under `search.formats`.
+2. Confirm the file is mounted inside the container.
+3. Ensure `limiter: false` is set if needed.
+4. Restart SearXNG.
+
+### SearXNG returned HTML
+
+This usually means the request hit the wrong endpoint or JSON output is still disabled.
+
+```bash
+docker compose exec backend \
+  wget -qO- 'http://searxng:8080/search?q=test&format=json' | head -c 100
+```
+
+### Request timed out
 
 Possible causes:
 
-- The SearXNG instance is offline.
-- One or more configured engines are slow.
+- One or more SearXNG engines are slow.
 - The instance is rate-limiting requests.
-- The network connection is unstable.
-- The frontend timeout is too short.
+- Network instability between backend and SearXNG.
 
-The default timeout is controlled by the application implementation. If the project exposes a setting such as `SEARXNG_TIMEOUT_MS`, update it carefully and test the user experience.
+Fix: increase `FETCH_TIMEOUT_MS` or disable slow engines.
 
-### HTTPS Page with HTTP Instance
+### Backend works, frontend shows errors
 
-Browsers may block an HTTP SearXNG request from an HTTPS RaiaSpace page because of mixed-content restrictions.
+Check the browser console.
 
-Use:
+- If it shows `http://` on an `https://` page, reset the API base URL to `/api`.
+- If it shows a CORS error, `FRONTEND_ORIGIN` does not match the page origin.
 
-```text
-[https://your-searxng-instance.example](https://your-searxng-instance.example)
-```
+### Voice search does not work
 
-instead of:
+Voice input depends on the Web Speech API, which is not consistently available across browsers. Use a supported browser, grant microphone permission, and confirm the selected language.
 
-```text
-http://your-searxng-instance.example
-```
-
-Alternatively, serve both applications over HTTP only in a controlled local-development environment. HTTPS is recommended for real deployments. [web:74]
-
-### Voice Search Does Not Work
-
-Voice input depends on the Web Speech API and browser implementation.
-
-The Web Speech API consists of speech recognition and speech synthesis capabilities, but speech recognition is not available consistently across major browsers. [web:65][web:70]
-
-If voice input is unavailable:
-
-- Use a supported browser.
-- Grant microphone permission.
-- Check the selected language.
-- Confirm that the device has a microphone.
-- Type the query manually if recognition is unavailable.
-
-### Empty Results
+### Empty results
 
 Possible causes:
 
-- The query is too specific.
-- Safe search filtered available results.
+- Query is too specific.
+- Safe search is filtering results.
 - Relevant engines are disabled.
-- The SearXNG instance is rate-limiting requests.
-- External search engines returned no results.
-- The selected category is unsupported or empty.
+- The instance is rate-limiting requests.
+- The chosen category is empty or unsupported.
 
-Try a simpler query, change the category, or review your SearXNG instance configuration.
+Try a simpler query or switch category.
 
-### Bookmarks or History Are Missing
+### Bookmarks or history are missing
 
 Check whether:
 
 - Browser site data was cleared.
-- Private browsing mode is active.
-- Storage access is blocked.
-- The site origin changed.
-- A browser extension removes local storage.
-- The browser profile changed.
+- Private browsing is active.
+- Storage is blocked.
+- The origin changed.
+- A browser extension is clearing local storage.
 
 ---
 
 ## Privacy
 
-RaiaSpace is designed as a **local-first** frontend.
+RaiaSpace is a self-hosted, local-first stack.
 
-### What RaiaSpace Does Not Provide
+### What it does not provide
 
-RaiaSpace does **not** provide:
+- No hosted backend operated by the project.
+- No user accounts.
+- No cloud bookmark database.
+- No hosted history sync.
+- No analytics or telemetry.
 
-- A search backend.
-- A user account system.
-- A cloud bookmark database.
-- A hosted search-history service.
-- Analytics by default.
-- A RaiaSpace server that receives queries.
+### Query routing
 
-### Query Routing
+Search terms go from your browser to your backend, then to your SearXNG instance. RaiaSpace itself does not send your queries to a project-operated server.
 
-Search terms are sent from your browser to the SearXNG instance you configure.
+### Local storage
 
-RaiaSpace does **not** route queries through a separate RaiaSpace backend. However, the configured SearXNG server and the external search engines it uses may process or log requests according to their own configuration and policies.
+Search history, bookmarks, and preferences are stored in browser storage under your RaiaSpace origin. This storage is persistent by default but can be cleared by the browser, the user, private browsing, or extensions.
 
-Self-hosting SearXNG gives you greater control, but it does **not** automatically guarantee that upstream engines or server logs retain no information.
-
-### Local Storage
-
-Search history, bookmarks, and preferences are stored in browser storage under the RaiaSpace website origin.
-
-Local storage is persistent by default but can be cleared by the user, browser, private-browsing session, storage policy, or browser extension. [web:62][web:63]
-
-### External Requests
+### External requests
 
 RaiaSpace may communicate with:
 
-- The SearXNG instance you configure.
+- Your backend.
+- Your SearXNG instance.
 - Remote result URLs when opened.
-- Browser speech-recognition services, depending on browser implementation and configuration.
-- Any external resource explicitly included by the deployment.
-
-The frontend should not be described as completely network-free because live search requires communication with SearXNG.
+- Browser speech-recognition services, depending on browser support.
 
 ---
 
 ## Security Considerations
 
-### CORS
+### Backend exposure
 
-CORS controls which browser origins can read responses from your SearXNG instance.
+The backend is meant to be reachable through HTTPS. Protect it by:
 
-Restrict `Access-Control-Allow-Origin` to the RaiaSpace origin whenever practical. Avoid permissive wildcard access for private or sensitive deployments.
+- Restricting `FRONTEND_ORIGIN` to the exact frontend origin.
+- Running it behind a reverse proxy with TLS.
+- Keeping dependencies updated.
+- Adding rate limiting if the deployment is public.
 
-### SearXNG Exposure
+### SearXNG exposure
 
-If your SearXNG instance is publicly reachable:
+In the reference deployment, SearXNG is not exposed to the public internet. That is the safest default. If you expose it publicly, apply rate limits, monitor resource usage, keep it updated, and avoid exposing admin interfaces.
 
-- Apply rate limits.
-- Monitor resource usage.
-- Keep SearXNG updated.
-- Review enabled engines.
-- Avoid exposing administrative interfaces.
-- Use HTTPS.
-- Restrict CORS where possible.
-- Consider authentication or network-level access controls for private deployments.
+### Search queries
 
-### Search Queries
+Search queries may contain sensitive information. Self-hosting gives you control, but upstream search engines can still process requests depending on your SearXNG configuration.
 
-Search queries may contain personal, confidential, or sensitive information.
+### Local storage
 
-Do not assume that a self-hosted frontend means that every upstream search engine receives no query data. Review your SearXNG and engine configuration before entering sensitive queries.
+Local storage is not encrypted. Do not store secrets, credentials, or private tokens there.
 
-### Local Storage
+### Suggested CSP
 
-Local storage is not an encrypted vault.
+```text
+default-src 'self';
+img-src 'self' data: https:;
+style-src 'self' 'unsafe-inline';
+script-src 'self';
+connect-src 'self';
+```
 
-Do not store secrets, credentials, private tokens, or highly sensitive content in RaiaSpace bookmarks or settings.
-
-### Browser Permissions
-
-Voice, image, file, and camera features may require browser permissions.
-
-Only grant permissions that are necessary for the feature you are using.
-
-### Content Security Policy
-
-When self-hosting RaiaSpace, consider deploying a restrictive Content Security Policy that allows only the resources required by the application.
+Adjust `connect-src` if the frontend uses a different backend origin.
 
 ---
 
 ## Browser Support
 
-| Browser        | Version   | Notes                                                                 |
-|----------------|----------:|-----------------------------------------------------------------------|
-| Chrome         | 90+       | Core search support; voice support depends on browser and platform      |
-| Edge           | 90+       | Core search support; voice support depends on browser and platform      |
-| Firefox        | 88+       | Core search support; speech-recognition availability may be limited     |
-| Safari         | 15.4+     | Core search support; speech features vary by version and platform       |
-| iOS Safari     | Recent    | Responsive layout; browser permission restrictions may apply            |
-| Android Chrome | Recent    | Responsive layout; microphone and camera permissions may be required    |
+| Browser | Version | Notes |
+| --- | --- | --- |
+| Chrome | 90+ | Core search; voice depends on platform |
+| Edge | 90+ | Core search; voice depends on platform |
+| Firefox | 88+ | Core search; speech recognition may be limited |
+| Safari | 15.4+ | Core search; speech features vary |
+| iOS Safari | Recent | Responsive layout; permission restrictions may apply |
+| Android Chrome | Recent | Responsive layout; microphone and camera permissions may be required |
 
-Feature availability depends on browser APIs, device permissions, SearXNG configuration, and the selected search category.
+Feature availability depends on browser APIs, device permissions, SearXNG configuration, and the selected search mode.
 
 ---
 
 ## Roadmap
 
-Potential future enhancements include:
+Potential future improvements:
 
-- Search-result pagination.
-- Instance capability detection.
-- Configurable request timeout.
-- Better result-type filtering.
-- More detailed engine-status reporting.
+- Configurable `FETCH_TIMEOUT_MS` from the UI.
+- Result-type filtering, such as PDF-only mode.
+- Per-engine status reporting.
 - Optional encrypted local bookmarks.
-- Import and export of bookmarks.
-- Search-history export.
-- PWA installation support.
-- Offline shell caching.
-- Improved camera and image-search workflows.
+- Import and export for bookmarks and history.
+- PWA installation and offline shell caching.
+- Better camera and image-search flows.
 - Additional localization.
 - Custom result layouts.
 - Accessibility audits and automated tests.
-- Optional same-origin deployment guide.
-- SearXNG preference synchronization.
+- Optional same-origin reverse-proxy mode.
+- Optional SearXNG preference synchronization.
 
-These features are not necessarily implemented in version `0.1.4`.
+These features are not guaranteed to be in `v0.1.4`.
 
 ---
 
@@ -627,75 +738,57 @@ These features are not necessarily implemented in version `0.1.4`.
 
 Contributions are welcome.
 
-Please preserve the core design principles of the project:
+Please preserve the core principles of the project:
 
-- No fake or placeholder search results.
-- No demo mode that disguises unavailable backend data.
+- No fake or placeholder results.
+- No demo mode that hides missing backend data.
 - No unnecessary external dependencies.
-- No analytics, telemetry, or phone-home behavior.
+- No analytics or telemetry.
 - No hidden query forwarding.
 - No secrets or private instance credentials in source files.
 - Keyboard accessibility for interactive elements.
-- Clear error states for failed SearXNG requests.
+- Clear error states for failed requests.
 - Responsive behavior on mobile and desktop.
 - Reduced-motion support.
 
-### Contribution Workflow
+### Workflow
 
 1. Fork the repository.
-2. Create a feature branch:
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
+2. Create a branch.
 3. Make your changes.
-4. Test with a real SearXNG instance.
-5. Test with an unavailable or misconfigured instance.
-6. Test CORS and HTTPS error states.
+4. Test with a real SearXNG instance and backend.
+5. Test with a broken or unavailable backend.
+6. Test with a broken or unavailable SearXNG instance.
 7. Test keyboard and screen-reader behavior.
-8. Commit your changes:
-
-   ```bash
-   git commit -m "Describe your change"
-   ```
-
-9. Push the branch:
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
+8. Commit your changes.
+9. Push the branch.
 10. Open a pull request.
 
-Open an issue first for significant architectural changes.
+Open an issue first for major architectural changes.
 
-Do **not** commit:
+Do not commit:
 
-- SearXNG passwords.
-- Private tokens.
-- API keys.
+- `.env` files with real secrets.
+- SearXNG passwords or secret keys.
+- API tokens.
 - Private instance URLs.
 - Personal search history.
 - Private bookmarks.
-- User data.
 - Generated browser-storage exports.
 
 ---
 
 ## License
 
-RaiaSpace is released under the **MIT License**.
+RaiaSpace is released under the MIT License.
 
-See the [LICENSE](LICENSE) file for the complete license text.
-
-The MIT license covers the project code. It does not grant ownership or redistribution rights for content returned by search engines or external websites.
+See the `LICENSE` file for full license text. The MIT License covers the project code, not content returned by search engines or external websites.
 
 ---
 
 ## Support
 
-If RaiaSpace is useful to you, you can support continued development through Buy Me a Coffee.
+If RaiaSpace is useful, you can support development through Buy Me a Coffee.
 
 Support is optional and does not unlock required functionality.
 
@@ -708,25 +801,26 @@ Support is optional and does not unlock required functionality.
   </a>
 </p>
 
-<p align="center">
-  <a href="https://buymeacoffee.com/hajirstudio">
-    Support RaiaSpace on Buy Me a Coffee
-  </a>
-</p>
-
 ---
 
 ## Version History
 
 ### v0.1.4
 
-- Added live SearXNG integration.
+- Added a backend service (`backend/server.js`) that proxies SearXNG server-side.
+- Removed direct browser-to-SearXNG calls.
+- Eliminated CORS and mixed-content issues.
+- Added Docker Compose deployment with SearXNG, Redis/Valkey, backend, frontend, and Caddy.
+- Added automatic HTTPS via Caddy and Let’s Encrypt.
+- Introduced a stable JSON contract between frontend and backend.
+- Changed settings to store the backend API base URL instead of a SearXNG URL.
+- Added automatic migration of the legacy `raiaspace-searxng-url` key.
+- Added a health endpoint used by Docker and the frontend.
+- Added structured backend error responses and status codes.
 - Added local search history and bookmarks.
-- Added configurable themes and reduced-motion support.
-- Added multimodal input controls.
-- Added SearXNG connectivity and CORS guidance.
-- Added keyboard shortcuts.
-- Improved responsive behavior.
+- Added themes and reduced-motion support.
+- Added multimodal input controls: voice, image, file, and camera.
+- Added keyboard shortcuts and improved responsive behavior.
 - Added explicit no-demo-results behavior.
 
 ---
@@ -739,4 +833,6 @@ Support is optional and does not unlock required functionality.
   <sub>RaiaSpace v0.1.4</sub>
 </p>
 
-**Live site:** https://hajir.is-a.dev/raiaspace
+<p align="center">
+  Live site: <a href="https://hajir.is-a.dev/raiaspace">hajir.is-a.dev/raiaspace</a>
+</p>

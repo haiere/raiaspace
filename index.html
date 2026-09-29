@@ -7,7 +7,7 @@
 
     <!-- Primary SEO -->
     <title>RaiaSpace Search v0.1.4 — Private Web, Image, Video & AI Search</title>
-    <meta name="description" content="RaiaSpace Search v0.1.4 is a private, minimal search interface for web, images, videos, news and AI. Fast, clean, ad-free, powered by your own SearXNG instance." />
+    <meta name="description" content="RaiaSpace Search v0.1.4 is a private, minimal search interface for web, images, videos, news and AI. Fast, clean, ad-free, powered by a self-hosted SearXNG backend." />
     <meta name="keywords" content="RaiaSpace, private search, SearXNG, meta search, image search, video search, AI search, privacy search engine, ad-free search" />
     <meta name="author" content="Hajir Studio" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -20,7 +20,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="RaiaSpace" />
     <meta property="og:title" content="RaiaSpace Search v0.1.4 — Private web, image, video & AI search" />
-    <meta property="og:description" content="Private, minimal search across web, images, videos, news and AI. Powered by your own SearXNG instance." />
+    <meta property="og:description" content="Private, minimal search across web, images, videos, news and AI. Powered by a self-hosted SearXNG backend." />
     <meta property="og:url" content="https://hajir.is-a.dev/raiaspace/" />
     <meta property="og:image" content="https://i.postimg.cc/GmWt2wch/H-blue.webp" />
     <meta property="og:image:alt" content="RaiaSpace Search interface preview" />
@@ -29,7 +29,7 @@
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="RaiaSpace Search v0.1.4 — Private web, image, video & AI search" />
-    <meta name="twitter:description" content="Private, minimal search across web, images, videos, news and AI. Powered by your own SearXNG instance." />
+    <meta name="twitter:description" content="Private, minimal search across web, images, videos, news and AI. Powered by a self-hosted SearXNG backend." />
     <meta name="twitter:image" content="https://i.postimg.cc/GmWt2wch/H-blue.webp" />
     <meta name="twitter:creator" content="@hajirstudio" />
 
@@ -259,48 +259,56 @@
             </div>
         </div>
 
-        <div class="settings-section-title">Search engine</div>
+        <div class="settings-section-title">Search backend</div>
         <div class="setting-row">
-            <div><div class="setting-label">SearXNG instance URL</div><div class="setting-sub" id="dataSourceSub">All queries are proxied to this instance</div></div>
+            <div>
+                <div class="setting-label">Backend API base URL</div>
+                <div class="setting-sub" id="dataSourceSub">All queries are proxied through this endpoint</div>
+            </div>
         </div>
         <div style="margin-top:6px;">
             <div class="url-field-row">
-                <input type="text" class="select-field" id="searxngUrlInput" placeholder="https://searx.example.com" aria-label="SearXNG instance URL">
+                <input type="text" class="select-field" id="apiBaseUrlInput" placeholder="/api or https://api.example.com" aria-label="Backend API base URL">
             </div>
             <div class="settings-btn-row">
-                <button type="button" class="btn btn-ghost" id="testSearxngBtn">Test</button>
-                <button type="button" class="btn btn-primary" id="saveSearxngBtn">Save</button>
-                <button type="button" class="btn btn-ghost" id="resetSearxngBtn">Reset</button>
+                <button type="button" class="btn btn-ghost" id="testApiBtn">Test</button>
+                <button type="button" class="btn btn-primary" id="saveApiBtn">Save</button>
+                <button type="button" class="btn btn-ghost" id="resetApiBtn">Reset</button>
             </div>
-            <div class="status-pill" id="searxngStatusPill">
-                <span id="searxngStatusText">Not tested</span>
+            <div class="status-pill" id="apiStatusPill">
+                <span id="apiStatusText">Not tested</span>
             </div>
             <div class="https-warn" id="httpsWarnBanner" hidden>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
-                <span>This page is served over HTTPS but the SearXNG URL uses HTTP. Your browser may block mixed content. Use an HTTPS instance, or deploy this page over HTTP.</span>
+                <span>This page is served over HTTPS but the backend URL uses HTTP. Your browser will block mixed content. Use an HTTPS backend or a same-origin relative path (e.g. <code>/api</code>).</span>
             </div>
 
             <div class="accordion" id="setupAccordion">
                 <button type="button" class="accordion-head" id="setupAccordionHead" aria-expanded="false">
-                    <span>How to set up SearXNG</span>
+                    <span>How the backend works</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </button>
                 <div class="accordion-body">
                     <div class="accordion-body-inner">
-                        <p>RaiaSpace connects to a <strong>SearXNG</strong> instance for live results. To use it:</p>
+                        <p>RaiaSpace talks to a small backend service that proxies requests to a self-hosted <strong>SearXNG</strong> instance.</p>
                         <ol style="margin:4px 0 0 18px;padding:0;">
-                            <li>Install SearXNG locally or pick a public instance that allows JSON output.</li>
-                            <li>Ensure JSON output is enabled in <code>settings.yml</code>:</li>
+                            <li>The frontend calls <code>GET {API_BASE}/search?q=...&mode=web&page=1</code>.</li>
+                            <li>The backend forwards the query to SearXNG using <code>format=json</code>.</li>
+                            <li>Results are normalized and returned as clean JSON.</li>
                         </ol>
-                        <div class="code-block">search:
-    formats:
-        - html
-        - json</div>
-                        <ol start="3">
-                            <li>Enter the base URL above (e.g. <code>https://searx.be</code>) and click <strong>Save</strong>.</li>
-                            <li>Click <strong>Test</strong> to verify the connection.</li>
-                        </ol>
-                        <p style="margin-top:8px;">Search queries are sent directly to your SearXNG instance. RaiaSpace does not proxy or log your searches.</p>
+                        <p style="margin-top:8px;">The default value <code>/api</code> assumes the backend is served on the same origin (recommended — avoids CORS). Set a full URL only if your API lives on a different subdomain.</p>
+                        <p style="margin-top:8px;">Expected backend response shape:</p>
+                        <div class="code-block">{
+  "ok": true,
+  "query": "example",
+  "mode": "web",
+  "page": 1,
+  "number_of_results": 42,
+  "results": [
+    { "title": "...", "url": "...", "snippet": "...", "domain": "..." }
+  ],
+  "suggestions": []
+}</div>
                     </div>
                 </div>
             </div>
@@ -510,8 +518,8 @@
         <div class="modal-body">
             <p style="margin-top:0;"><strong>RaiaSpace is built with privacy as a first principle.</strong></p>
             <ul style="padding-left:20px;color:var(--text-soft);line-height:1.8;">
-                <li>No search queries are sent to RaiaSpace servers.</li>
-                <li>All searches go directly to your configured SearXNG instance.</li>
+                <li>Search queries are sent only to your self-hosted backend and SearXNG instance.</li>
+                <li>No queries are sent to RaiaSpace servers or third parties.</li>
                 <li>Search history and settings are stored locally in your browser.</li>
                 <li>No cookies, no trackers, no analytics.</li>
                 <li>You can clear your local data at any time from Settings.</li>
@@ -528,7 +536,7 @@
         <div class="hero-glow" aria-hidden="true"></div>
         <div class="hero-inner wrap">
             <h1>Search beyond the obvious.</h1>
-            <p class="lede">Explore the web with a faster, cleaner, more private search experience. Powered by your own SearXNG instance.</p>
+            <p class="lede">Explore the web with a faster, cleaner, more private search experience. Powered by your own SearXNG backend.</p>
 
             <div class="search-shell">
                 <form id="searchForm" class="search-box glass" role="search" novalidate>
@@ -610,7 +618,7 @@
             </div>
             <div>
                 <h2>Your search, your data</h2>
-                <p>RaiaSpace doesn't track you. No cookies, no analytics, no third-party requests. All searches go directly to your chosen SearXNG instance. You stay in control.</p>
+                <p>RaiaSpace doesn't track you. No cookies, no analytics, no third-party requests. All searches go through your own backend to your own SearXNG instance. You stay in control.</p>
             </div>
         </div>
     </section>
