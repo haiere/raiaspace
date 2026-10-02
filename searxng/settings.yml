@@ -7,32 +7,16 @@ general:
 server:
   bind_address: "0.0.0.0"
   port: 8080
-  # Overridden by SEARXNG_SECRET env var
-  secret_key: "REPLACE_WITH_OPENSSL_RAND_HEX_32"
-  # Disable rate limiter for a private instance.
-  # Re-enable if you expose this SearXNG publicly.
+  secret_key: "5c3cdef553ea35566bf028176d88d2"
   limiter: false
   image_proxy: true
 
 search:
-  # The critical line — enables /search?format=json
   formats:
     - html
     - json
   safe_search: 1
   autocomplete: "duckduckgo"
-  default_lang: "en"
 
 ui:
   default_locale: "en"
-  query_in_title: false
-  infinite_scroll: true
-  default_theme: "simple"
-
-# Redis/Valkey for caching (optional, only needed if limiter is enabled)
-redis:
-  url: redis://redis:6379/0
-
-outgoing:
-  request_timeout: 5.0
-  max_request_timeout: 10.0
