@@ -1,35 +1,13 @@
-# ── RaiaSpace Frontend ──────────────────────────────────────
 {$DOMAIN_FRONTEND} {
     tls {$LETSENCRYPT_EMAIL}
     encode gzip
 
-    # API routes → backend
     handle /api/* {
         reverse_proxy backend:3000
     }
 
-    # Everything else → static frontend
     handle {
         root * /usr/share/nginx/html
         file_server
-        try_files {path} /index.html
-    }
-
-    header {
-        Strict-Transport-Security "max-age=31536000; includeSubDomains"
-        X-Content-Type-Options "nosniff"
-        Referrer-Policy "strict-origin-when-cross-origin"
-    }
-}
-
-# ── SearXNG (opsional, jika ingin expose UI SearXNG) ────────
-{$DOMAIN_API} {
-    tls {$LETSENCRYPT_EMAIL}
-    encode gzip
-
-    reverse_proxy searxng:8080 {
-        header_up X-Real-IP {remote_host}
-        header_up X-Forwarded-For {remote_host}
-        header_up X-Forwarded-Proto {scheme}
     }
 }
