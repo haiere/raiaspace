@@ -2,10 +2,20 @@
     tls {$LETSENCRYPT_EMAIL}
     encode gzip
 
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        -Server
+    }
+
+    # API calls go to the Node backend
     handle /api/* {
         reverse_proxy backend:3000
     }
 
+    # Everything else is the static frontend
     handle {
         root * /usr/share/nginx/html
         file_server
