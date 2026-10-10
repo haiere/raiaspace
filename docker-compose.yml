@@ -6,8 +6,8 @@ services:
     container_name: raiaspace-searxng
     restart: unless-stopped
     environment:
-      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL}
-      - SEARXNG_SECRET=${SEARXNG_SECRET}
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-http://localhost:8080/}
+      - SEARXNG_SECRET=${SEARXNG_SECRET:?Set SEARXNG_SECRET in .env}
     volumes:
       - ./searxng/settings.yml:/etc/searxng/settings.yml:ro
     networks:
@@ -21,18 +21,6 @@ services:
       retries: 3
       start_period: 20s
 
-  redis:
-    image: docker.io/valkey/valkey:8-alpine
-    container_name: raiaspace-redis
-    restart: unless-stopped
-    command: valkey-server --save 30 1 --loglevel warning
-    volumes:
-      - valkey-data:/data
-    networks:
-      - raiaspace-net
-    expose:
-      - "6379"
-
   backend:
     build:
       context: ./backend
@@ -42,7 +30,7 @@ services:
     environment:
       - PORT=3000
       - SEARXNG_URL=http://searxng:8080
-      - FRONTEND_ORIGIN=${RAIASPACE_FRONTEND_URL}
+      - FRONTEND_ORIGIN=${RAIASPACE_FRONTEND_URL:?Set RAIASPACE_FRONTEND_URL in .env}
       - FETCH_TIMEOUT_MS=15000
     depends_on:
       searxng:
@@ -51,6 +39,12 @@ services:
       - raiaspace-net
     expose:
       - "3000"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   frontend:
     image: nginx:alpine
@@ -77,17 +71,18 @@ services:
       - caddy-data:/data
       - caddy-config:/config
     environment:
-      - DOMAIN_FRONTEND=${DOMAIN_FRONTEND}
-      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+      - DOMAIN_FRONTEND=${DOMAIN_FRONTEND:?Set DOMAIN_FRONTEND in .env}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL:?Set LETSENCRYPT_EMAIL in .env}
     depends_on:
-      - searxng
-      - backend
+      searxng:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
       - frontend
     networks:
       - raiaspace-net
 
 volumes:
-  valkey-data:
   caddy-data:
   caddy-config:
 
