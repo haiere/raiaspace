@@ -3,8 +3,8 @@ import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SEARXNG_URL = process.env.SEARXNG_URL || "http://searxng:8080";
-const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
+const SEARXNG_URL = (process.env.SEARXNG_URL || "http://searxng:8080").replace(/\/+$/, "");
+const FRONTEND_ORIGIN = (process.env.FRONTEND_ORIGIN || "http://localhost:3000").replace(/\/+$/, "");
 const FETCH_TIMEOUT_MS = parseInt(process.env.FETCH_TIMEOUT_MS || "15000", 10);
 
 // ── Middleware ──────────────────────────────────────────────
@@ -20,6 +20,20 @@ app.use(cors({
 // ── Health check ────────────────────────────────────────────
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
+// Map RaiaSpace modes → SearXNG categories
+const CATEGORY_MAP = {
+  web: "general",
+  ai: "general",
+  images: "images",
+  videos: "videos",
+  news: "news",
+  academic: "science",
+  maps: "general",
+  shopping: "general",
+  social: "general",
+  files: "general",
+};
+
 // ── Search endpoint ─────────────────────────────────────────
 app.get("/api/search", async (req, res) => {
   const {
@@ -30,37 +44,38 @@ app.get("/api/search", async (req, res) => {
     time_range,
     safesearch,
     categories,
+    filetype,
+    site,
+    exclude,
+    exact,
   } = req.query;
 
   if (!q || !q.trim()) {
     return res.status(400).json({ ok: false, error: "Missing query parameter 'q'." });
   }
 
-  // Map RaiaSpace modes → SearXNG categories
-  const CATEGORY_MAP = {
-    web: "general",
-    ai: "general",
-    images: "images",
-    videos: "videos",
-    news: "news",
-    academic: "science",
-    maps: "general",
-    shopping: "general",
-    social: "general",
-    files: "general",
-  };
+  // Build the effective query: exact phrase, site restriction, exclusions
+  let query = q.trim();
+  if (exact && String(exact).trim()) query = `"${String(exact).trim()}"`;
+  if (site && String(site).trim()) query += ` site:${String(site).trim()}`;
+  if (exclude) {
+    for (const term of String(exclude).split(/\s+/).filter(Boolean)) {
+      query += ` -${term}`;
+    }
+  }
 
   const params = new URLSearchParams({
-    q: q.trim(),
+    q: query,
     format: "json",
-    pageno: String(page),
+    pageno: String(Math.max(1, parseInt(page, 10) || 1)),
   });
 
   const category = categories || CATEGORY_MAP[mode] || "general";
   if (category) params.set("categories", category);
   if (language) params.set("language", language);
   if (time_range) params.set("time_range", time_range);
-  if (safesearch !== undefined) params.set("safesearch", String(safesearch));
+  if (safesearch !== undefined && safesearch !== "") params.set("safesearch", String(safesearch));
+  if (filetype) params.set("filetype", String(filetype));
 
   const searxngEndpoint = `${SEARXNG_URL}/search?${params.toString()}`;
 
@@ -89,7 +104,7 @@ app.get("/api/search", async (req, res) => {
           error: "SearXNG rate-limited the request. Try again shortly.",
         });
       }
-      return res.status(upstream.status).json({
+      return res.status(502).json({
         ok: false,
         error: `SearXNG returned HTTP ${upstream.status}.`,
       });
@@ -143,4 +158,5 @@ app.listen(PORT, "0.0.0.0", () => {
   console.log(`RaiaSpace backend listening on :${PORT}`);
   console.log(`SearXNG upstream: ${SEARXNG_URL}`);
   console.log(`CORS origin: ${FRONTEND_ORIGIN}`);
+  console.log(`Fetch timeout: ${FETCH_TIMEOUT_MS}ms`);
 });
