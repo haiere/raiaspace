@@ -1,6 +1,5 @@
 /* ============================================================
-   RaiaSpace Search v0.1.4 — Application Logic
-   Talks to a RaiaSpace backend, which proxies SearXNG.
+   RaiaSpace Search v0.1.5 
    ============================================================ */
 (function () {
     "use strict";
